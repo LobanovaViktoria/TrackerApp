@@ -9,6 +9,8 @@ import UIKit
 
 class TrackersSupplementaryView: UICollectionReusableView {
     
+    static let identifier = "header"
+    
     var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -24,9 +26,10 @@ class TrackersSupplementaryView: UICollectionReusableView {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            titleLabel.heightAnchor.constraint(equalToConstant: 18)
         ])
     }
     

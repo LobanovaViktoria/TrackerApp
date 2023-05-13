@@ -12,7 +12,9 @@ protocol TrackersCollectionViewCellDelegate: AnyObject {
 }
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-
+    
+    static let identifier = "trackersCollectionViewCell"
+    
     public weak var delegate: TrackersCollectionViewCellDelegate?
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
@@ -56,11 +58,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var checkButton: UIButton = {
-        let checkButton = UIButton.systemButton(
-            with: UIImage(systemName: "plus")!,
-            target: self,
-            action: #selector(didTapCheckButton)
-        )
+        let checkButton = UIButton()
+        checkButton.setImage(UIImage(named: "plus"), for: .normal)
+        checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
         checkButton.tintColor = .white
         checkButton.layer.cornerRadius = 17
         checkButton.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +76,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         trackerView.addSubview(trackerNameLabel)
         contentView.addSubview(resultLabel)
         contentView.addSubview(checkButton)
-       
+        
         NSLayoutConstraint.activate([
             
             trackerView.heightAnchor.constraint(equalToConstant: 90),
@@ -91,7 +91,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             
             emojiLabel.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor) ,
             emojiLabel.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor),
-
+            
             trackerNameLabel.topAnchor.constraint(equalTo: trackerView.topAnchor, constant: 44),
             trackerNameLabel.trailingAnchor.constraint(equalTo: trackerView.trailingAnchor, constant: -12),
             trackerNameLabel.leadingAnchor.constraint(equalTo: trackerView.leadingAnchor, constant: 12),
@@ -119,44 +119,31 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
         delegate?.completedTracker(id: id)
     }
-
     
-    func setTrackerId(_ id: UUID) {
-        trackerId = id
-    }
-    
-    func setTrackerName(_ name: String) {
-        trackerNameLabel.text = name
-    }
-    
-    func setTrackerColor(_ color: UIColor) {
-        trackerView.backgroundColor = color
-    }
-    
-    func setTrackerEmoji(_ emoji: String) {
-        emojiLabel.text = emoji
-    }
-    
-    func setTrackerCheckButtonColor(_ color: UIColor) {
-        checkButton.backgroundColor = color
-    }
-    
-    func setIsCompletedToday(_ completed: Bool) {
-        isCompletedToday = completed
-        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
-    }
-    
-    func setCheckButtonIsEnabled(_ isEnabled: Bool) {
-        checkButton.isEnabled = isEnabled
-    }
-    
-    func setResultLabel(_ result: Int) {
-        let mod10 = result % 10
-        let mod100 = result % 100
+    func configure(
+        _ id: UUID,
+        name: String,
+        color: UIColor,
+        emoji: String,
+        isCompleted: Bool,
+        isEnabled: Bool,
+        completedCount: Int
+    ) {
+        let mod10 = completedCount % 10
+        let mod100 = completedCount % 100
         let not10To20 = mod100 < 10 || mod100 > 20
-        var str = "\(result) "
+        var str = "\(completedCount) "
         
-        if result == 0 {
+        trackerId = id
+        trackerNameLabel.text = name
+        trackerView.backgroundColor = color
+        checkButton.backgroundColor = color
+        emojiLabel.text = emoji
+        isCompletedToday = isCompleted
+        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
+        checkButton.isEnabled = isEnabled
+        
+        if completedCount == 0 {
             str += "дней"
         } else if mod10 == 1 && not10To20 {
             str += "день"
@@ -168,4 +155,3 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         resultLabel.text = str
     }
 }
-

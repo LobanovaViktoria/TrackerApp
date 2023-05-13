@@ -69,8 +69,8 @@ class TrackersVC: UIViewController {
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(TrackersCollectionViewCell.self,
-                                forCellWithReuseIdentifier: "cell")
-        collectionView.register(TrackersSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+                                forCellWithReuseIdentifier: TrackersCollectionViewCell.identifier)
+        collectionView.register(TrackersSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TrackersSupplementaryView.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -161,7 +161,7 @@ class TrackersVC: UIViewController {
             label.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
             
-            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 34),
+            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
@@ -209,22 +209,26 @@ extension TrackersVC: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackersCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as? TrackersCollectionViewCell else { return UICollectionViewCell() }
         cell.delegate = self
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        cell.setTrackerName(tracker.name)
-        cell.setTrackerColor(tracker.color ?? .ypBlue)
-        cell.setTrackerEmoji(tracker.emoji ?? "")
-        cell.setTrackerCheckButtonColor(tracker.color ?? .ypBlue)
-        cell.setTrackerId(tracker.id)
-        cell.setIsCompletedToday(completedTrackers.contains(where: { record in
+        let isCompleted = completedTrackers.contains(where: { record in
             record.idTracker == tracker.id &&
             record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
-        }))
-        cell.setCheckButtonIsEnabled(datePicker.date < Date() || Date().yearMonthDayComponents == datePicker.date.yearMonthDayComponents)
-        cell.setResultLabel(completedTrackers.filter({ record in
+        })
+        let isEnabled = datePicker.date < Date() || Date().yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+        let completedCount = completedTrackers.filter({ record in
             record.idTracker == tracker.id
-        }).count)
+        }).count
+        cell.configure(
+            tracker.id,
+            name: tracker.name,
+            color: tracker.color ?? .ypBlue,
+            emoji: tracker.emoji ?? "",
+            isCompleted: isCompleted,
+            isEnabled: isEnabled,
+            completedCount: completedCount
+        )
         return cell
     }
     
@@ -276,7 +280,7 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
             id = ""
         }
         
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! TrackersSupplementaryView
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackersSupplementaryView else { return UICollectionReusableView() }
         view.titleLabel.text = visibleCategories[indexPath.section].name
         return view
     }
