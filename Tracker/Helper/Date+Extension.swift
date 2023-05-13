@@ -1,5 +1,5 @@
 //
-//  Date+Extentions.swift
+//  Date+Extension.swift
 //  Tracker
 //
 //  Created by Viktoria Lobanova on 11.05.2023.

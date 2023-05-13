@@ -52,15 +52,13 @@ class CreateTrackerVC: UIViewController {
         setupLayout()
     }
     
-    @objc
-    private func irregularEventButtonAction() {
+    @objc private func irregularEventButtonAction() {
         let createRegularEventVC = CreateEventVC(.irregular)
         createRegularEventVC.delegate = self
         present(createRegularEventVC, animated: true)
     }
     
-    @objc
-    private func regularEventButtonAction() {
+    @objc private func regularEventButtonAction() {
         let createRegularEventVC = CreateEventVC(.regular)
         createRegularEventVC.delegate = self
         present(createRegularEventVC, animated: true)
@@ -93,6 +91,7 @@ class CreateTrackerVC: UIViewController {
 }
 
 extension CreateTrackerVC: CreateEventVCDelegate {
+    
     func createTracker(_ tracker: Tracker, categoryName: String) {
         delegate?.createTracker(tracker, categoryName: categoryName)
         dismiss(animated: true)

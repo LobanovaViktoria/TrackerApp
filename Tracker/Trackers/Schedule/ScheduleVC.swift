@@ -82,6 +82,7 @@ class ScheduleVC: UIViewController {
 }
 
 extension ScheduleVC: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return WeekDay.allCases.count
     }
@@ -104,6 +105,7 @@ extension ScheduleVC: UITableViewDataSource {
 }
 
 extension ScheduleVC: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
@@ -112,6 +114,7 @@ extension ScheduleVC: UITableViewDelegate {
 }
 
 extension ScheduleVC: WeekDayTableViewCellDelegate {
+    
     func stateChanged(for day: WeekDay, isOn: Bool) {
         if isOn {
             schedule.append(day)

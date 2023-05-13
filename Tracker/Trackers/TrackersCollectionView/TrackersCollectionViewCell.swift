@@ -76,7 +76,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         trackerView.addSubview(trackerNameLabel)
         contentView.addSubview(resultLabel)
         contentView.addSubview(checkButton)
-        
        
         NSLayoutConstraint.activate([
             
@@ -105,7 +104,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             
             resultLabel.centerYAnchor.constraint(equalTo: checkButton.centerYAnchor),
             resultLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12)
-            
         ])
     }
     
@@ -153,12 +151,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     func setResultLabel(_ result: Int) {
-        
         let mod10 = result % 10
         let mod100 = result % 100
         let not10To20 = mod100 < 10 || mod100 > 20
-        
         var str = "\(result) "
+        
         if result == 0 {
             str += "дней"
         } else if mod10 == 1 && not10To20 {

@@ -1,5 +1,5 @@
 //
-//  Color+Extentions.swift
+//  Color+Extension.swift
 //  Tracker
 //
 //  Created by Viktoria Lobanova on 27.04.2023.

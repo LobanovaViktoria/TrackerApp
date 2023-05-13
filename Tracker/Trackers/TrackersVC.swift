@@ -9,13 +9,12 @@ import UIKit
 
 class TrackersVC: UIViewController {
     
-    //    var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
-    var categories: [TrackerCategory] = MockData.categories
-    
-    var completedTrackers: [TrackerRecord] = [] //трекеры, которые были «выполнены» в выбранную дату
-    var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
-    var currentDate: Int?
-    var searchText: String = ""
+    //  private var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
+    private var categories: [TrackerCategory] = MockData.categories
+    private var completedTrackers: [TrackerRecord] = [] //трекеры, которые были «выполнены» в выбранную дату
+    private var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
+    private var currentDate: Int?
+    private var searchText: String = ""
     private var widthAnchor: NSLayoutConstraint?
     
     private lazy var dateFormatter: DateFormatter = {
@@ -106,8 +105,7 @@ class TrackersVC: UIViewController {
         }
     }
     
-    @objc
-    func dateChanged(_ sender: UIDatePicker) {
+    @objc func dateChanged(_ sender: UIDatePicker) {
         let components = Calendar.current.dateComponents([.weekday], from: sender.date)
         if let day = components.weekday {
             currentDate = day
@@ -115,15 +113,13 @@ class TrackersVC: UIViewController {
         }
     }
     
-    @objc
-    func addTracker() {
+    @objc func addTracker() {
         let trackersVC = CreateTrackerVC()
         trackersVC.delegate = self
         present(trackersVC, animated: true)
     }
     
-    @objc
-    private func cancelEditingButtonAction() {
+    @objc private func cancelEditingButtonAction() {
         searchTextField.text = ""
         widthAnchor?.constant = 0
         setupLayout()
@@ -143,7 +139,6 @@ class TrackersVC: UIViewController {
         widthAnchor = cancelEditingButton.widthAnchor.constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
-            
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchTextField.trailingAnchor.constraint(equalTo: cancelEditingButton.leadingAnchor, constant: -5),
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7),
@@ -153,13 +148,11 @@ class TrackersVC: UIViewController {
             cancelEditingButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             widthAnchor!,
             cancelEditingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7),
-            ])
+        ])
     }
     
     private func setupLayout() {
-        
         NSLayoutConstraint.activate([
-            
             imageView.widthAnchor.constraint(equalToConstant: 80),
             imageView.heightAnchor.constraint(equalToConstant: 80),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -205,11 +198,17 @@ class TrackersVC: UIViewController {
 
 extension TrackersVC: UICollectionViewDataSource {
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
         return visibleCategories[section].trackers.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! TrackersCollectionViewCell
         cell.delegate = self
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
@@ -237,23 +236,36 @@ extension TrackersVC: UICollectionViewDataSource {
 }
 
 extension TrackersVC: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         return CGSize(width: 167, height: 148)
-        
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
         return 10
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
         return 10
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         var id: String
         switch kind {
         case UICollectionView.elementKindSectionHeader:
@@ -269,7 +281,11 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
         return view
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         let indexPath = IndexPath(row: 0, section: section)
         let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
         
@@ -296,7 +312,6 @@ extension TrackersVC: CreateTrackerVCDelegate {
             categories.remove(at: index ?? 0)
             categories.append(trackerCategory)
         }
-        
         visibleCategories = categories
         updateCategories()
         collectionView.reloadData()
@@ -309,7 +324,6 @@ extension TrackersVC {
         searchText = searchTextField.text ?? ""
         widthAnchor?.constant = 85
         updateCategories()
-        
     }
 }
 
@@ -329,12 +343,12 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
 }
 
 extension TrackersVC: UITextFieldDelegate {
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         widthAnchor?.constant = 85
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-    
         setupLayoutsearchTextFieldAndButton()
     }
 }

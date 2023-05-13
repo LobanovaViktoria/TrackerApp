@@ -14,8 +14,8 @@
             filePath = "Tracker/Trackers/CreateEventVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
             landmarkName = "textFieldChanged()"
             landmarkType = "7">
          </BreakpointContent>

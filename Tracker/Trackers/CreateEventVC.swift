@@ -29,13 +29,13 @@ class CreateEventVC: UIViewController {
     
     private let event: Event
     private let nameCell = ["Категория", "Расписание"]
-    public weak var delegate: CreateEventVCDelegate?
-    private var schedule: [WeekDay] = []
-    var scheduleSubTitle: String = ""
-    var dayOfWeek: [String] = []
     private let limitNumberOfCharacters = 38
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
+    private var schedule: [WeekDay] = []
+    private var scheduleSubTitle: String = ""
+    private var dayOfWeek: [String] = []
+    public weak var delegate: CreateEventVCDelegate?
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -168,7 +168,6 @@ class CreateEventVC: UIViewController {
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(cancelButtonAction), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        
         return button
     }()
     
@@ -188,26 +187,22 @@ class CreateEventVC: UIViewController {
         setupLayout()
     }
     
-    @objc
-    func createEventButtonAction() {
+    @objc func createEventButtonAction() {
         let tracker = Tracker(id: UUID(), name: textField.text ?? "", color: .yellow, emoji: "🙂", schedule: schedule)
         delegate?.createTracker(tracker, categoryName: "Важное")
         dismiss(animated: true)
     }
     
-    @objc
-    private func cancelButtonAction() {
+    @objc private func cancelButtonAction() {
         dismiss(animated: true)
     }
     
-    @objc
-    private func categoryButtonAction() {
+    @objc private func categoryButtonAction() {
         let categoryVC = CategoryVC()
         present(categoryVC, animated: true)
     }
     
-    @objc
-    private func scheduleButtonAction() {
+    @objc private func scheduleButtonAction() {
         let scheduleVC = ScheduleVC()
         scheduleVC.delegate = self
         present(scheduleVC, animated: true)
@@ -233,7 +228,6 @@ class CreateEventVC: UIViewController {
     
     private func setupLayout() {
         let createEventViewHeight: CGFloat = event == .regular ? 150 : 75
-        
         heightAnchor = errorLabel.heightAnchor.constraint(equalToConstant: 0)
         var constraints = [
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -329,6 +323,7 @@ class CreateEventVC: UIViewController {
 }
 
 extension UITextField {
+    
     func indent(size:CGFloat) {
         self.leftView = UIView(frame: CGRect(x: self.frame.minX, y: self.frame.minY, width: size, height: self.frame.height))
         self.leftViewMode = .always
@@ -337,7 +332,11 @@ extension UITextField {
 
 extension CreateEventVC: UITextFieldDelegate {
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         let maxLenght = limitNumberOfCharacters
         let currentString = (textField.text ?? "") as NSString
         let newString = currentString.replacingCharacters(in: range, with: string)
@@ -347,6 +346,7 @@ extension CreateEventVC: UITextFieldDelegate {
 }
 
 extension CreateEventVC: ScheduleVCDelegate {
+    
     func createSchedule(schedule: [WeekDay]) {
         self.schedule = schedule
         let scheduleString = schedule.map { $0.shortName }.joined(separator: ", ")
