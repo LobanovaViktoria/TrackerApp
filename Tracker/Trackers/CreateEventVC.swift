@@ -26,6 +26,10 @@ protocol CreateEventVCDelegate: AnyObject {
 }
 
 class CreateEventVC: UIViewController {
+    private let emojies = [
+        "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍒",
+        "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+    ]
     
     private let event: Event
     private let nameCell = ["Категория", "Расписание"]
@@ -33,6 +37,7 @@ class CreateEventVC: UIViewController {
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
     private var schedule: [WeekDay] = []
+    private var emoji: String = ""
     private var scheduleSubTitle: String = ""
     private var dayOfWeek: [String] = []
     public weak var delegate: CreateEventVCDelegate?
@@ -148,6 +153,24 @@ class CreateEventVC: UIViewController {
         return label
     }()
     
+    private lazy var emojiCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
+        collectionView.register(EmojiSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiSupplementaryView.identifier)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        return collectionView
+    }()
+    
+    private lazy var emojiView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private lazy var createEventButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать", for: .normal)
@@ -185,10 +208,11 @@ class CreateEventVC: UIViewController {
         view.backgroundColor = .white
         addSubviews()
         setupLayout()
+        emojiCollectionView.allowsMultipleSelection = false
     }
     
     @objc func createEventButtonAction() {
-        let tracker = Tracker(id: UUID(), name: textField.text ?? "", color: .yellow, emoji: "🙂", schedule: schedule)
+        let tracker = Tracker(id: UUID(), name: textField.text ?? "", color: .yellow, emoji: emoji, schedule: schedule)
         delegate?.createTracker(tracker, categoryName: "Важное")
         dismiss(animated: true)
     }
@@ -222,6 +246,8 @@ class CreateEventVC: UIViewController {
             scheduleButton.addSubview(forwardImage2)
         }
         updateScheduleButton()
+        scrollView.addSubview(emojiView)
+        emojiView.addSubview(emojiCollectionView)
         scrollView.addSubview(createEventButton)
         scrollView.addSubview(cancelButton)
     }
@@ -229,6 +255,7 @@ class CreateEventVC: UIViewController {
     private func setupLayout() {
         let createEventViewHeight: CGFloat = event == .regular ? 150 : 75
         heightAnchor = errorLabel.heightAnchor.constraint(equalToConstant: 0)
+        let emojiViewWidth: CGFloat = scrollView.bounds.width
         var constraints = [
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
@@ -259,6 +286,17 @@ class CreateEventVC: UIViewController {
             
             forwardImage1.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -24),
             forwardImage1.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
+            
+            emojiView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 32),
+            emojiView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 0),
+            emojiView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
+            emojiView.heightAnchor.constraint(equalToConstant: 204),
+            emojiView.widthAnchor.constraint(equalToConstant: emojiViewWidth),
+            
+            emojiCollectionView.topAnchor.constraint(equalTo: emojiView.topAnchor),
+            emojiCollectionView.bottomAnchor.constraint(equalTo: emojiView.bottomAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: emojiView.leadingAnchor, constant: 16),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: emojiView.trailingAnchor, constant: -16),
             
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -35),
@@ -355,3 +393,88 @@ extension CreateEventVC: ScheduleVCDelegate {
     }
 }
 
+extension CreateEventVC: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return emojies.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = emojiCollectionView.dequeueReusableCell(withReuseIdentifier: "emojiCollectionViewCell", for: indexPath) as? EmojiCollectionViewCell
+        else {
+            return UICollectionViewCell()
+        }
+        cell.layer.cornerRadius = 16
+        cell.emojiLabel.text = emojies[indexPath.row]
+        return cell
+    }
+}
+
+extension CreateEventVC: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+        cell?.backgroundColor = .lightGray
+        emoji = cell?.emojiLabel.text ?? ""
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+        cell?.backgroundColor = .white
+    }
+}
+
+extension CreateEventVC: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: 52, height: 52)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        var id: String
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            id = "header"
+        case UICollectionView.elementKindSectionFooter:
+            id = "footer"
+        default:
+            id = ""
+        }
+        
+        guard let view = emojiCollectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? EmojiSupplementaryView else { return UICollectionReusableView() }
+        view.titleLabel.text = "Emoji"
+        return view
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,height: UIView.layoutFittingExpandedSize.height), withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
