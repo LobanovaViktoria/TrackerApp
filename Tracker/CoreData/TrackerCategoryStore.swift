@@ -41,16 +41,20 @@ func addNewTrackerCategory(_ trackerCategory: TrackerCategory) throws {
     }
     
      func trackerCategory(from data: TrackerCategoryCoreData) throws -> TrackerCategory {
-         guard let name = data.name else {
-             throw DatabaseError.someError
-         }
-         guard let trackers = data.trackers else {
-             throw DatabaseError.someError
-         }
-         return TrackerCategory(
-             name: name,
-             trackers: Array(_immutableCocoaArray: trackers)
-         )
+//         guard let name = data.name else {
+//             throw DatabaseError.someError
+//         }
+//         guard let trackers = data.trackers else {
+//             throw DatabaseError.someError
+//         }
+//         return TrackerCategory(
+//             name: name,
+//             trackers: Array(_immutableCocoaArray: trackers)
+//         )
+         
+         let name = data.unwrappedName
+         let trackers = data.trackersArray
+         return TrackerCategory(name: name, trackers: trackers)
      }
     
 }
