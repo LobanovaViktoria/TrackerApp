@@ -11,7 +11,7 @@ class TrackersVC: UIViewController {
     
     //  private var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
     private var categories: [TrackerCategory] = try! TrackerCategoryStore.shared.fetchTrackerCategories()//MockData.categories
-    private var completedTrackers: [TrackerRecord] = [] //трекеры, которые были «выполнены» в выбранную дату
+    private var completedTrackers: [TrackerRecord] = try! TrackerRecordStore.shared.fetchTrackerRecord() //трекеры, которые были «выполнены» в выбранную дату
     private var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
     private var currentDate: Int?
     private var searchText: String = ""
@@ -196,6 +196,7 @@ class TrackersVC: UIViewController {
             if newTrackers.count > 0 {
                 let newCategory = TrackerCategory(name: category.name, trackers: newTrackers)
                 newCategories.append(newCategory)
+                try! TrackerCategoryStore().addNewTrackerCategory(newCategory)
             }
         }
         visibleCategories = newCategories
@@ -350,6 +351,7 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
             completedTrackers.remove(at: index)
         } else {
             completedTrackers.append(TrackerRecord(idTracker: id, date: datePicker.date))
+            try? TrackerRecordStore.shared.addNewTrackerRecord(TrackerRecord(idTracker: id, date: datePicker.date))
         }
         collectionView.reloadData()
     }
