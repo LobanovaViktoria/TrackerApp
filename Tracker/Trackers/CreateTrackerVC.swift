@@ -94,6 +94,7 @@ extension CreateTrackerVC: CreateEventVCDelegate {
     
     func createTracker(_ tracker: Tracker, categoryName: String) {
         delegate?.createTracker(tracker, categoryName: categoryName)
+        try! TrackerStore().addNewTracker(tracker)
         dismiss(animated: true)
     }
 }

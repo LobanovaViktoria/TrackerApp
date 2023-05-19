@@ -28,7 +28,7 @@ protocol CreateEventVCDelegate: AnyObject {
 class CreateEventVC: UIViewController {
     private let emojies = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍒",
-        "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+        "🍔", "🥦", "🏓", "🥇", "🎸", "🏝"
     ]
     
     private let colors: [UIColor] = [.color1, .color2, .color3, .color4, .color5, .color6, .color7, .color8, .color9, .color10, .color11, .color12, .color13, .color14, .color15, .color16, .color17, .color18]
@@ -40,6 +40,8 @@ class CreateEventVC: UIViewController {
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
     private var schedule: [WeekDay] = []
+    private var selectedEmojiCell: IndexPath? = nil
+    private var selectedColorCell: IndexPath? = nil
     private var selectedEmoji: String = ""
     private var selectedColor: UIColor = .color2
     private var scheduleSubTitle: String = ""
@@ -169,8 +171,15 @@ class CreateEventVC: UIViewController {
         return collectionView
     }()
     
-    private lazy var emojiView: UIView = {
+//    private lazy var emojiView: UIView = {
+//        let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+    
+    private lazy var buttonBackgroundView: UIView = {
         let view = UIView()
+        view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -212,7 +221,7 @@ class CreateEventVC: UIViewController {
         view.backgroundColor = .white
         addSubviews()
         setupLayout()
-        emojiCollectionView.allowsMultipleSelection = false
+        emojiCollectionView.allowsMultipleSelection = true
     }
     
     @objc func createEventButtonAction() {
@@ -250,16 +259,18 @@ class CreateEventVC: UIViewController {
             scheduleButton.addSubview(forwardImage2)
         }
         updateScheduleButton()
-        scrollView.addSubview(emojiView)
-        emojiView.addSubview(emojiCollectionView)
-        scrollView.addSubview(createEventButton)
-        scrollView.addSubview(cancelButton)
+//        scrollView.addSubview(emojiView)
+        scrollView.addSubview(emojiCollectionView)
+        scrollView.addSubview(buttonBackgroundView)
+        buttonBackgroundView.addSubview(createEventButton)
+        buttonBackgroundView.addSubview(cancelButton)
     }
     
     private func setupLayout() {
         let createEventViewHeight: CGFloat = event == .regular ? 150 : 75
         heightAnchor = errorLabel.heightAnchor.constraint(equalToConstant: 0)
-        let emojiViewWidth: CGFloat = scrollView.bounds.width
+//        let emojiViewWidth: CGFloat = scrollView.bounds.width
+//        let emojiViewHeight: CGFloat = 300
         var constraints = [
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
@@ -291,24 +302,31 @@ class CreateEventVC: UIViewController {
             forwardImage1.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -24),
             forwardImage1.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             
-            emojiView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 32),
-            emojiView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 0),
-            emojiView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
-            emojiView.heightAnchor.constraint(equalToConstant: 204),
-            emojiView.widthAnchor.constraint(equalToConstant: emojiViewWidth),
+//            emojiView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 32),
+//            emojiView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 0),
+//            emojiView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
+//            emojiView.heightAnchor.constraint(equalToConstant: emojiViewHeight),
+//            emojiView.widthAnchor.constraint(equalToConstant: emojiViewWidth),
             
-            emojiCollectionView.topAnchor.constraint(equalTo: emojiView.topAnchor),
-            emojiCollectionView.bottomAnchor.constraint(equalTo: emojiView.bottomAnchor),
-            emojiCollectionView.leadingAnchor.constraint(equalTo: emojiView.leadingAnchor, constant: 16),
-            emojiCollectionView.trailingAnchor.constraint(equalTo: emojiView.trailingAnchor, constant: -16),
+            emojiCollectionView.topAnchor.constraint(equalTo: createEventView.bottomAnchor),
+            emojiCollectionView.bottomAnchor.constraint(equalTo: buttonBackgroundView.topAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            emojiCollectionView.widthAnchor.constraint(equalToConstant: scrollView.bounds.width - 32),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 400),
             
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -35),
+            buttonBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            buttonBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            buttonBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            buttonBackgroundView.heightAnchor.constraint(equalToConstant: 110),
+            
+            cancelButton.leadingAnchor.constraint(equalTo: buttonBackgroundView.leadingAnchor, constant: 20),
+            cancelButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -35),
             cancelButton.widthAnchor.constraint(equalToConstant: 161),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             
-            createEventButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            createEventButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -35),
+            createEventButton.trailingAnchor.constraint(equalTo: buttonBackgroundView.trailingAnchor, constant: -20),
+            createEventButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -35),
             createEventButton.widthAnchor.constraint(equalToConstant: 161),
             createEventButton.heightAnchor.constraint(equalToConstant: 60)
         ]
@@ -436,24 +454,30 @@ extension CreateEventVC: UICollectionViewDelegate {
         let section = indexPath.section
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
         if section == 0 {
-            cell?.backgroundColor = .lightGray
-            selectedEmoji = cell?.emojiLabel.text ?? ""
+            if selectedEmojiCell != nil {
+                collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
+                collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .white
+            }
+                cell?.backgroundColor = .lightGray
+                selectedEmoji = cell?.emojiLabel.text ?? ""
+                selectedEmojiCell = indexPath
         } else if section == 1 {
+            if selectedColorCell != nil {
+                collectionView.deselectItem(at: selectedColorCell!, animated: true)
+                collectionView.cellForItem(at: selectedColorCell!)?.layer.borderWidth = 0
+            }
             cell?.layer.borderWidth = 3
             cell?.layer.cornerRadius = 8
             cell?.layer.borderColor = UIColor.lightGray.cgColor
             selectedColor = cell?.colorView.backgroundColor ?? .color2
+            selectedColorCell = indexPath
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let section = indexPath.section
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
-        if section == 0 {
-            cell?.backgroundColor = .white
-        } else if section == 1 {
-            cell?.layer.borderWidth = 0
-        }
+        cell?.backgroundColor = .white
+        cell?.layer.borderWidth = 0
     }
 }
 

@@ -10,7 +10,7 @@ import UIKit
 class TrackersVC: UIViewController {
     
     //  private var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
-    private var categories: [TrackerCategory] = MockData.categories
+    private var categories: [TrackerCategory] = try! DatabaseManager.shared.fetchTrackerCategories()//MockData.categories
     private var completedTrackers: [TrackerRecord] = [] //трекеры, которые были «выполнены» в выбранную дату
     private var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
     private var currentDate: Int?
@@ -84,6 +84,13 @@ class TrackersVC: UIViewController {
         addSubviews()
         setupLayoutsearchTextFieldAndButton()
         setupLayout()
+        
+        coreDataTest()
+    }
+    
+    func coreDataTest() {
+        let trackers = try! TrackerStore().fetchTrackers()
+        print("Trackers: \(trackers)")
     }
     
     private func makeNavBar() {
@@ -310,14 +317,16 @@ extension TrackersVC: CreateTrackerVCDelegate {
             }
         }
         if categoryToUpdate == nil {
-            categories.append(TrackerCategory(name: categoryName, trackers: [tracker]))
+            let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
+            categories.append(newCategory)
+            try? DatabaseManager.shared.addNewTrackerCategory(newCategory)
         } else {
             let trackerCategory = TrackerCategory(name: categoryName, trackers: [tracker] + (categoryToUpdate?.trackers ?? []))
             categories.remove(at: index ?? 0)
             categories.append(trackerCategory)
         }
         visibleCategories = categories
-        updateCategories()
+//        updateCategories()
         collectionView.reloadData()
     }
 }
