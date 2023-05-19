@@ -10,7 +10,7 @@ import UIKit
 class TrackersVC: UIViewController {
     
     //  private var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
-    private var categories: [TrackerCategory] = try! DatabaseManager.shared.fetchTrackerCategories()//MockData.categories
+    private var categories: [TrackerCategory] = try! TrackerCategoryStore.shared.fetchTrackerCategories()//MockData.categories
     private var completedTrackers: [TrackerRecord] = [] //трекеры, которые были «выполнены» в выбранную дату
     private var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
     private var currentDate: Int?
@@ -319,14 +319,14 @@ extension TrackersVC: CreateTrackerVCDelegate {
         if categoryToUpdate == nil {
             let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
             categories.append(newCategory)
-            try? DatabaseManager.shared.addNewTrackerCategory(newCategory)
+            try? TrackerCategoryStore.shared.addNewTrackerCategory(newCategory)
         } else {
             let trackerCategory = TrackerCategory(name: categoryName, trackers: [tracker] + (categoryToUpdate?.trackers ?? []))
             categories.remove(at: index ?? 0)
             categories.append(trackerCategory)
         }
         visibleCategories = categories
-//        updateCategories()
+        updateCategories()
         collectionView.reloadData()
     }
 }
