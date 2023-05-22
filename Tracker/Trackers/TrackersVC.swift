@@ -7,7 +7,8 @@
 
 import UIKit
 
-class TrackersVC: UIViewController {
+final class TrackersVC: UIViewController {
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     //список категорий и вложенных в них трекеров
     private var categories: [TrackerCategory] = []//MockData.categories
@@ -82,15 +83,14 @@ class TrackersVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        visibleCategories = trackerCategoryStore.trackerCategories
         setDayOfWeek()
         updateCategories()
         makeNavBar()
         addSubviews()
         setupLayoutsearchTextFieldAndButton()
         setupLayout()
-        TrackerCategoryStore.shared.delegate = self
-        categories = TrackerCategoryStore.shared.trackerCategories
-        visibleCategories = categories
+        trackerCategoryStore.delegate = self
     }
     
     private func makeNavBar() {
@@ -205,6 +205,12 @@ class TrackersVC: UIViewController {
 
 extension TrackersVC: UICollectionViewDataSource {
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        let count = visibleCategories.count
+        collectionView.isHidden = count == 0
+        return count
+    }
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
@@ -237,12 +243,6 @@ extension TrackersVC: UICollectionViewDataSource {
             completedCount: completedCount
         )
         return cell
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        let count = visibleCategories.count
-        collectionView.isHidden = count == 0
-        return count
     }
 }
 
@@ -309,28 +309,23 @@ extension TrackersVC: CreateTrackerVCDelegate {
     func createTracker(_ tracker: Tracker, categoryName: String) {
         var categoryToUpdate: TrackerCategory?
         var index: Int?
-        
+        var categories: [TrackerCategory] = TrackerCategoryStore.shared.trackerCategories
         for i in 0..<categories.count {
             if categories[i].name == categoryName {
                 categoryToUpdate = categories[i]
                 index = i
             }
         }
-        if let categoryToUpdate {
-            try! TrackerCategoryStore.shared.addTracker(tracker, to: categoryToUpdate)
+        if categoryToUpdate != nil {
+            try? TrackerCategoryStore.shared.addTracker(tracker, to: categoryToUpdate!)
         } else {
-            let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
-            categories.append(newCategory)
-            try? TrackerCategoryStore.shared.addNewTrackerCategory(newCategory)
-//            let trackerCategory = TrackerCategory(name: categoryName, trackers: [tracker] + (categoryToUpdate?.trackers ?? []))
-//            categories.remove(at: index ?? 0)
-//            categories.append(trackerCategory)
+        let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
+            categoryToUpdate = newCategory
+            try! trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
+            }
         }
-//        visibleCategories = categories
-//        updateCategories()
-//        collectionView.reloadData()
     }
-}
+
 
 extension TrackersVC {
     
@@ -353,7 +348,6 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
             completedTrackers.append(TrackerRecord(idTracker: id, date: datePicker.date))
             try? TrackerRecordStore.shared.addNewTrackerRecord(TrackerRecord(idTracker: id, date: datePicker.date))
         }
-//        collectionView.reloadData()
     }
 }
 
@@ -370,7 +364,7 @@ extension TrackersVC: UITextFieldDelegate {
 
 extension TrackersVC: TrackerCategoryStoreDelegate {
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        visibleCategories = store.trackerCategories
+        visibleCategories = trackerCategoryStore.trackerCategories
         collectionView.performBatchUpdates {
             let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
             let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }

@@ -8,13 +8,6 @@
 import Foundation
 import CoreData
 
-protocol TrackerCategoryStoreDelegate: AnyObject {
-    func store(
-        _ store: TrackerCategoryStore,
-        didUpdate update: TrackerCategoryStoreUpdate
-    )
-}
-
 enum TrackerCategoryStoreError: Error {
     case decodingErrorInvalidName
 }
@@ -30,6 +23,13 @@ struct TrackerCategoryStoreUpdate {
     let movedIndexes: Set<Move>
 }
 
+protocol TrackerCategoryStoreDelegate: AnyObject {
+    func store(
+        _ store: TrackerCategoryStore,
+        didUpdate update: TrackerCategoryStoreUpdate
+    )
+}
+
 class TrackerCategoryStore: NSObject {
     
     static let shared = TrackerCategoryStore()
@@ -41,14 +41,6 @@ class TrackerCategoryStore: NSObject {
     private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
-    var trackerCategories: [TrackerCategory] {
-        guard
-            let objects = self.fetchedResultsController.fetchedObjects,
-            let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
-        else { return [] }
-        return trackerCategories
-    }
-    
     convenience override init() {
         let context = DatabaseManager.shared.context
         try! self.init(context: context)
@@ -56,7 +48,6 @@ class TrackerCategoryStore: NSObject {
     
     init(context: NSManagedObjectContext) throws {
         self.context = context
-        
         super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -74,6 +65,14 @@ class TrackerCategoryStore: NSObject {
         try controller.performFetch()
     }
     
+    var trackerCategories: [TrackerCategory] {
+        guard
+            let objects = self.fetchedResultsController.fetchedObjects,
+            let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
+        else { return [] }
+        return trackerCategories
+    }
+  
     func addNewTrackerCategory(_ trackerCategory: TrackerCategory) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
         updateExistingTrackerCategory(trackerCategoryCoreData, with: trackerCategory)
