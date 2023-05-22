@@ -9,10 +9,14 @@ import UIKit
 
 class TrackersVC: UIViewController {
     
-    //  private var categories: [TrackerCategory] = [] //список категорий и вложенных в них трекеров
-    private var categories: [TrackerCategory] = try! TrackerCategoryStore.shared.fetchTrackerCategories()//MockData.categories
-    private var completedTrackers: [TrackerRecord] = try! TrackerRecordStore.shared.fetchTrackerRecord() //трекеры, которые были «выполнены» в выбранную дату
-    private var visibleCategories: [TrackerCategory] = [] //отображается при поиске и/или изменении дня недели
+    //список категорий и вложенных в них трекеров
+    private var categories: [TrackerCategory] = []//MockData.categories
+    
+    //трекеры, которые были «выполнены» в выбранную дату
+    private var completedTrackers: [TrackerRecord] = try! TrackerRecordStore.shared.fetchTrackerRecord()
+    
+    //отображается при поиске и/или изменении дня недели
+    private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Int?
     private var searchText: String = ""
     private var widthAnchor: NSLayoutConstraint?
@@ -84,13 +88,9 @@ class TrackersVC: UIViewController {
         addSubviews()
         setupLayoutsearchTextFieldAndButton()
         setupLayout()
-        
-        coreDataTest()
-    }
-    
-    func coreDataTest() {
-        let trackers = try! TrackerStore().fetchTrackers()
-        print("Trackers: \(trackers)")
+        TrackerCategoryStore.shared.delegate = self
+        categories = TrackerCategoryStore.shared.trackerCategories
+        visibleCategories = categories
     }
     
     private func makeNavBar() {
@@ -196,11 +196,10 @@ class TrackersVC: UIViewController {
             if newTrackers.count > 0 {
                 let newCategory = TrackerCategory(name: category.name, trackers: newTrackers)
                 newCategories.append(newCategory)
-                try! TrackerCategoryStore().addNewTrackerCategory(newCategory)
             }
         }
         visibleCategories = newCategories
-        collectionView.reloadData()
+//        collectionView.reloadData()
     }
 }
 
@@ -317,18 +316,19 @@ extension TrackersVC: CreateTrackerVCDelegate {
                 index = i
             }
         }
-        if categoryToUpdate == nil {
+        if let categoryToUpdate {
+            try! TrackerCategoryStore.shared.addTracker(tracker, to: categoryToUpdate)
+        } else {
             let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
             categories.append(newCategory)
             try? TrackerCategoryStore.shared.addNewTrackerCategory(newCategory)
-        } else {
-            let trackerCategory = TrackerCategory(name: categoryName, trackers: [tracker] + (categoryToUpdate?.trackers ?? []))
-            categories.remove(at: index ?? 0)
-            categories.append(trackerCategory)
+//            let trackerCategory = TrackerCategory(name: categoryName, trackers: [tracker] + (categoryToUpdate?.trackers ?? []))
+//            categories.remove(at: index ?? 0)
+//            categories.append(trackerCategory)
         }
-        visibleCategories = categories
-        updateCategories()
-        collectionView.reloadData()
+//        visibleCategories = categories
+//        updateCategories()
+//        collectionView.reloadData()
     }
 }
 
@@ -353,7 +353,7 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
             completedTrackers.append(TrackerRecord(idTracker: id, date: datePicker.date))
             try? TrackerRecordStore.shared.addNewTrackerRecord(TrackerRecord(idTracker: id, date: datePicker.date))
         }
-        collectionView.reloadData()
+//        collectionView.reloadData()
     }
 }
 
@@ -365,5 +365,25 @@ extension TrackersVC: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         setupLayoutsearchTextFieldAndButton()
+    }
+}
+
+extension TrackersVC: TrackerCategoryStoreDelegate {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        visibleCategories = store.trackerCategories
+        collectionView.performBatchUpdates {
+            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
+            collectionView.insertItems(at: insertedIndexPaths)
+            collectionView.insertItems(at: deletedIndexPaths)
+            collectionView.insertItems(at: updatedIndexPaths)
+            for move in update.movedIndexes {
+                collectionView.moveItem(
+                    at: IndexPath(item: move.oldIndex, section: 0),
+                    to: IndexPath(item: move.newIndex, section: 0)
+                )
+            }
+        }
     }
 }
