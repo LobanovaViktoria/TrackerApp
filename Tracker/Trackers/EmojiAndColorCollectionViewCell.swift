@@ -1,5 +1,5 @@
 //
-//  EmojiCollectionViewCell.swift
+//  EmojiAndColorCollectionViewCell.swift
 //  Tracker
 //
 //  Created by Viktoria Lobanova on 17.05.2023.
@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class EmojiCollectionViewCell: UICollectionViewCell {
+final class EmojiAndColorCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = "emojiCollectionViewCell"
+    static let identifier = "emojiAndColorCollectionViewCell"
     
     lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()

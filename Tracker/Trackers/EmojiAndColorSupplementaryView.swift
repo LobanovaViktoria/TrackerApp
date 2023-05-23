@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EmojiSupplementaryView: UICollectionReusableView {
+class EmojiAndColorSupplementaryView: UICollectionReusableView {
     
     static let identifier = "header"
     
@@ -27,8 +27,8 @@ class EmojiSupplementaryView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 0),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
             titleLabel.heightAnchor.constraint(equalToConstant: 18)
         ])
     }

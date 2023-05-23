@@ -66,6 +66,7 @@ class CreateEventVC: UIViewController {
         label.textColor = .black
         label.text = event.titleText
         label.font = .systemFont(ofSize: 16)
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -159,12 +160,12 @@ class CreateEventVC: UIViewController {
         return label
     }()
     
-    private lazy var emojiCollectionView: UICollectionView = {
+    private lazy var emojiAndColorCollectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
-        collectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
-        collectionView.register(EmojiSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiSupplementaryView.identifier)
+        collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: EmojiAndColorCollectionViewCell.identifier)
+        collectionView.register(EmojiAndColorSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiAndColorSupplementaryView.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -215,7 +216,7 @@ class CreateEventVC: UIViewController {
         view.backgroundColor = .white
         addSubviews()
         setupLayout()
-        emojiCollectionView.allowsMultipleSelection = true
+        emojiAndColorCollectionView.allowsMultipleSelection = true
     }
     
     @objc func createEventButtonAction() {
@@ -241,7 +242,7 @@ class CreateEventVC: UIViewController {
    
     private func addSubviews() {
         view.addSubview(scrollView)
-        view.addSubview(label)
+        scrollView.addSubview(label)
         scrollView.addSubview(textField)
         scrollView.addSubview(errorLabel)
         scrollView.addSubview(createEventView)
@@ -254,7 +255,7 @@ class CreateEventVC: UIViewController {
         }
         updateScheduleButton()
 //        scrollView.addSubview(emojiView)
-        scrollView.addSubview(emojiCollectionView)
+        scrollView.addSubview(emojiAndColorCollectionView)
         scrollView.addSubview(buttonBackgroundView)
         buttonBackgroundView.addSubview(createEventButton)
         buttonBackgroundView.addSubview(cancelButton)
@@ -264,15 +265,17 @@ class CreateEventVC: UIViewController {
         let createEventViewHeight: CGFloat = event == .regular ? 150 : 75
         heightAnchor = errorLabel.heightAnchor.constraint(equalToConstant: 0)
         var constraints = [
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
+            label.heightAnchor.constraint(equalToConstant: 25),
+            label.widthAnchor.constraint(equalToConstant: 250),
             
-            scrollView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 24),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            textField.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 38),
+            textField.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 38),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -294,12 +297,12 @@ class CreateEventVC: UIViewController {
             forwardImage1.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -24),
             forwardImage1.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             
-            emojiCollectionView.topAnchor.constraint(equalTo: createEventView.bottomAnchor),
-            emojiCollectionView.bottomAnchor.constraint(equalTo: buttonBackgroundView.topAnchor),
-            emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
-            emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
-            emojiCollectionView.widthAnchor.constraint(equalToConstant: scrollView.bounds.width - 32),
-            emojiCollectionView.heightAnchor.constraint(equalToConstant: 400),
+            emojiAndColorCollectionView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 22),
+            emojiAndColorCollectionView.bottomAnchor.constraint(equalTo: buttonBackgroundView.topAnchor),
+            emojiAndColorCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            emojiAndColorCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            emojiAndColorCollectionView.widthAnchor.constraint(equalToConstant: scrollView.bounds.width - 32),
+            emojiAndColorCollectionView.heightAnchor.constraint(equalToConstant: 400),
             
             buttonBackgroundView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             buttonBackgroundView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -415,7 +418,7 @@ extension CreateEventVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = indexPath.section
         
-        guard let cell = emojiCollectionView.dequeueReusableCell(withReuseIdentifier: "emojiCollectionViewCell", for: indexPath) as? EmojiCollectionViewCell
+        guard let cell = emojiAndColorCollectionView.dequeueReusableCell(withReuseIdentifier: "emojiAndColorCollectionViewCell", for: indexPath) as? EmojiAndColorCollectionViewCell
         else {
             return UICollectionViewCell()
         }
@@ -438,7 +441,7 @@ extension CreateEventVC: UICollectionViewDataSource {
 extension CreateEventVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = indexPath.section
-        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
         if section == 0 {
             if selectedEmojiCell != nil {
                 collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
@@ -461,7 +464,7 @@ extension CreateEventVC: UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+        let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
         cell?.backgroundColor = .white
         cell?.layer.borderWidth = 0
     }
@@ -509,7 +512,7 @@ extension CreateEventVC: UICollectionViewDelegateFlowLayout {
             id = ""
         }
         
-        guard let view = emojiCollectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? EmojiSupplementaryView else { return UICollectionReusableView() }
+        guard let view = emojiAndColorCollectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? EmojiAndColorSupplementaryView else { return UICollectionReusableView() }
         let section = indexPath.section
         if section == 0 {
             view.titleLabel.text = collectionViewHeader[0]
