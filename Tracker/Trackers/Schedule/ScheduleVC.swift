@@ -24,6 +24,26 @@ class ScheduleVC: UIViewController {
         return label
     }()
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .white
+        scrollView.frame = view.bounds
+        scrollView.contentSize = contentSize
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private var contentSize: CGSize {
+        CGSize(width: view.frame.width, height: view.frame.height)
+    }
+    
+    private lazy var buttonBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private lazy var enterButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
@@ -38,11 +58,11 @@ class ScheduleVC: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         var width = view.frame.width - 16*2
-        var height = 7*75
+        var height = 75*7
         tableView.register(WeekDayTableViewCell.self, forCellReuseIdentifier: WeekDayTableViewCell.identifier)
         tableView.layer.cornerRadius = 16
         tableView.separatorColor = .ypGray
-        tableView.frame = CGRect(x: 16, y: 79, width: Int(width), height: height)
+        tableView.frame = CGRect(x: 16, y: 16, width: Int(width), height: Int(height))
         tableView.dataSource = self
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -58,18 +78,31 @@ class ScheduleVC: UIViewController {
     
     private func addSubviews() {
         view.addSubview(label)
-        view.addSubview(enterButton)
-        view.addSubview(tableView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(tableView)
+        scrollView.addSubview(buttonBackgroundView)
+        buttonBackgroundView.addSubview(enterButton)
     }
     
     private func setupLayout() {
+        //heightTableView = view.bounds.height - 200
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
             
-            enterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            scrollView.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            buttonBackgroundView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            buttonBackgroundView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            buttonBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            buttonBackgroundView.heightAnchor.constraint(equalToConstant: 80),
+            
+            enterButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.bottomAnchor, constant: -10),
             enterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            enterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            enterButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             enterButton.heightAnchor.constraint(equalToConstant: 60),
         ])
     }
@@ -100,6 +133,7 @@ extension ScheduleVC: UITableViewDataSource {
         } else {
             weekDayCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
+        weekDayCell.selectionStyle = .none
         return weekDayCell
     }
 }
@@ -110,7 +144,9 @@ extension ScheduleVC: UITableViewDelegate {
         return 75
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
 extension ScheduleVC: WeekDayTableViewCellDelegate {

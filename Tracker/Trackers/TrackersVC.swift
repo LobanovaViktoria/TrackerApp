@@ -184,7 +184,7 @@ final class TrackersVC: UIViewController {
     
     private func updateCategories() {
         var newCategories: [TrackerCategory] = []
-        for category in categories {
+        for category in visibleCategories {
             var newTrackers: [Tracker] = []
             for tracker in category.trackers {
                 guard let schedule = tracker.schedule else { return }
@@ -199,7 +199,7 @@ final class TrackersVC: UIViewController {
             }
         }
         visibleCategories = newCategories
-//        collectionView.reloadData()
+        collectionView.reloadData()
     }
 }
 
@@ -318,11 +318,15 @@ extension TrackersVC: CreateTrackerVCDelegate {
         }
         if categoryToUpdate != nil {
             try? TrackerCategoryStore.shared.addTracker(tracker, to: categoryToUpdate!)
+            //updateCategories()
         } else {
         let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
             categoryToUpdate = newCategory
             try! trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
+            
+            //updateCategories()
             }
+        //collectionView.reloadData()
         }
     }
 
@@ -379,5 +383,6 @@ extension TrackersVC: TrackerCategoryStoreDelegate {
                 )
             }
         }
+        //visibleCategories = trackerCategoryStore.trackerCategories
     }
 }

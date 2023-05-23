@@ -170,14 +170,8 @@ class CreateEventVC: UIViewController {
         collectionView.dataSource = self
         return collectionView
     }()
-    
-//    private lazy var emojiView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
-    
-    private lazy var buttonBackgroundView: UIView = {
+
+        private lazy var buttonBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -269,8 +263,6 @@ class CreateEventVC: UIViewController {
     private func setupLayout() {
         let createEventViewHeight: CGFloat = event == .regular ? 150 : 75
         heightAnchor = errorLabel.heightAnchor.constraint(equalToConstant: 0)
-//        let emojiViewWidth: CGFloat = scrollView.bounds.width
-//        let emojiViewHeight: CGFloat = 300
         var constraints = [
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
@@ -302,12 +294,6 @@ class CreateEventVC: UIViewController {
             forwardImage1.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -24),
             forwardImage1.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             
-//            emojiView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 32),
-//            emojiView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 0),
-//            emojiView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 0),
-//            emojiView.heightAnchor.constraint(equalToConstant: emojiViewHeight),
-//            emojiView.widthAnchor.constraint(equalToConstant: emojiViewWidth),
-            
             emojiCollectionView.topAnchor.constraint(equalTo: createEventView.bottomAnchor),
             emojiCollectionView.bottomAnchor.constraint(equalTo: buttonBackgroundView.topAnchor),
             emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
@@ -315,18 +301,18 @@ class CreateEventVC: UIViewController {
             emojiCollectionView.widthAnchor.constraint(equalToConstant: scrollView.bounds.width - 32),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: 400),
             
-            buttonBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            buttonBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            buttonBackgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            buttonBackgroundView.heightAnchor.constraint(equalToConstant: 110),
+            buttonBackgroundView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            buttonBackgroundView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            buttonBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            buttonBackgroundView.heightAnchor.constraint(equalToConstant: 80),
             
             cancelButton.leadingAnchor.constraint(equalTo: buttonBackgroundView.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -35),
+            cancelButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             cancelButton.widthAnchor.constraint(equalToConstant: 161),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             
             createEventButton.trailingAnchor.constraint(equalTo: buttonBackgroundView.trailingAnchor, constant: -20),
-            createEventButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -35),
+            createEventButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             createEventButton.widthAnchor.constraint(equalToConstant: 161),
             createEventButton.heightAnchor.constraint(equalToConstant: 60)
         ]

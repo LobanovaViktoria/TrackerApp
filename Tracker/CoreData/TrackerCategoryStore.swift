@@ -46,8 +46,18 @@ class TrackerCategoryStore: NSObject {
         try! self.init(context: context)
     }
     
+    var trackerCategories: [TrackerCategory] {
+        guard
+            let objects = self.fetchedResultsController.fetchedObjects,
+            let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
+        else { return [] }
+        return trackerCategories
+    }
+    
+    
     init(context: NSManagedObjectContext) throws {
         self.context = context
+        
         super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -65,14 +75,6 @@ class TrackerCategoryStore: NSObject {
         try controller.performFetch()
     }
     
-    var trackerCategories: [TrackerCategory] {
-        guard
-            let objects = self.fetchedResultsController.fetchedObjects,
-            let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
-        else { return [] }
-        return trackerCategories
-    }
-  
     func addNewTrackerCategory(_ trackerCategory: TrackerCategory) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
         updateExistingTrackerCategory(trackerCategoryCoreData, with: trackerCategory)
