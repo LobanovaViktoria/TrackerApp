@@ -1,10 +1,3 @@
-//
-//  DatabaseManager.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 18.05.2023.
-//
-
 import Foundation
 import CoreData
 
@@ -15,7 +8,6 @@ enum DatabaseError: Error {
 final class DatabaseManager {
     
     private let modelName = "Tracker"
-    
     var context: NSManagedObjectContext {
         persistentContainer.viewContext
     }
@@ -29,7 +21,6 @@ final class DatabaseManager {
     // MARK: - Core Data stack
 
     private lazy var persistentContainer: NSPersistentContainer = {
-      
         let container = NSPersistentContainer(name: modelName)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -52,6 +43,5 @@ final class DatabaseManager {
             }
         }
     }
-  
-   
+    
 }

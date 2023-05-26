@@ -1,10 +1,3 @@
-//
-//  TrackersCollectionViewCell.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 27.04.2023.
-//
-
 import UIKit
 
 protocol TrackersCollectionViewCellDelegate: AnyObject {
@@ -110,7 +103,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     @objc private func didTapCheckButton() {
         guard let id = trackerId else {

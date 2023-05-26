@@ -1,10 +1,3 @@
-//
-//  WeekDayTableViewCell.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 29.04.2023.
-//
-
 import UIKit
 
 protocol WeekDayTableViewCellDelegate: AnyObject {

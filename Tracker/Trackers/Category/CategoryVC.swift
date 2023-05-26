@@ -1,10 +1,3 @@
-//
-//  CategoryVC.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 03.05.2023.
-//
-
 import UIKit
 
 class CategoryVC: UIViewController {
@@ -122,7 +115,7 @@ extension CategoryVC: UITableViewDataSource {
             return UITableViewCell()
         }
         categoryCell.contentView.backgroundColor = .backgroundColor
-        categoryCell.label.text = "Категория 2"
+        categoryCell.label.text = "Важное"
         
         if indexPath.row == 0 {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)

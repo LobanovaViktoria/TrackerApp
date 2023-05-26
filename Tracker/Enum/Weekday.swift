@@ -1,10 +1,3 @@
-//
-//  EnumWeekday.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 05.05.2023.
-//
-
 import Foundation
 
 enum WeekDay: String, CaseIterable {

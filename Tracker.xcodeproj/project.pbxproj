@@ -159,11 +159,11 @@
 		328E8FD429F93D01007D0D51 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				32247FE32A16131100F15006 /* CoreData */,
 				328E8FD529F93D01007D0D51 /* AppDelegate.swift */,
 				328E8FD729F93D01007D0D51 /* SceneDelegate.swift */,
 				328E900B29F9B3EC007D0D51 /* TabBarController.swift */,
 				32167EE12A0C20EC00527A7C /* MockData.swift */,
+				32247FE32A16131100F15006 /* CoreData */,
 				32CA889D2A04D2AC006AAF75 /* Enum */,
 				32CA88902A022E89006AAF75 /* Struct */,
 				32A4F2D829FAC568000B3550 /* Helper */,

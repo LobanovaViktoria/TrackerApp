@@ -1,10 +1,3 @@
-//
-//  TrackerCategoryStore.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 18.05.2023.
-//
-
 import Foundation
 import CoreData
 
@@ -55,10 +48,8 @@ class TrackerCategoryStore: NSObject {
         return trackerCategories
     }
     
-    
     init(context: NSManagedObjectContext) throws {
         self.context = context
-        
         super.init()
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -82,7 +73,10 @@ class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
-    func updateExistingTrackerCategory(_ trackerCategoryCoreData: TrackerCategoryCoreData, with category: TrackerCategory) {
+    func updateExistingTrackerCategory(
+        _ trackerCategoryCoreData: TrackerCategoryCoreData,
+        with category: TrackerCategory)
+    {
         trackerCategoryCoreData.nameCategory = category.name
         for tracker in category.trackers {
             let track = TrackerCoreData(context: context)
@@ -116,12 +110,16 @@ class TrackerCategoryStore: NSObject {
         }
         let trackers: [Tracker] = data.trackers?.compactMap { tracker in
             guard let trackerCoreData = (tracker as? TrackerCoreData) else { return nil }
+            guard let id = trackerCoreData.id,
+                  let nameTracker = trackerCoreData.nameTracker,
+                  let color = trackerCoreData.color?.color,
+                  let emoji = trackerCoreData.emoji else { return nil }
             return Tracker(
-                id: trackerCoreData.id!,
-                name: trackerCoreData.nameTracker!,
-                color: trackerCoreData.color!.color,
-                emoji: trackerCoreData.emoji!,
-                schedule: trackerCoreData.schedule!.compactMap { WeekDay(rawValue: $0) }
+                id: id,
+                name: nameTracker,
+                color: color,
+                emoji: emoji,
+                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }
             )
         } ?? []
         return TrackerCategory(
@@ -132,16 +130,15 @@ class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore {
+    
     func predicateFetch(nameTracker: String) -> [TrackerCategory] {
-        
         if nameTracker.isEmpty {
             return trackerCategories
         } else {
             let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
             request.returnsObjectsAsFaults = false
             request.predicate = NSPredicate(format: "ANY trackers.nameTracker CONTAINS[cd] %@", nameTracker)
-
-            let trackerCategoriesCoreData = try! context.fetch(request)
+            guard let trackerCategoriesCoreData = try? context.fetch(request) else { return [] }
             guard let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)})
             else { return [] }
             return categories
@@ -149,18 +146,20 @@ extension TrackerCategoryStore {
     }
 }
 
-// request.predicate = NSPredicate(format: "SUBQUERY(trackers, $x, ANY $x.nameTracker CONTAINS[n] \(nameTracker)).@count > 0")
-
-
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    
+    func controllerWillChangeContent(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
         updatedIndexes = IndexSet()
         movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
     }
-
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    
+    func controllerDidChangeContent(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
+    {
         delegate?.store(
             self,
             didUpdate: TrackerCategoryStoreUpdate(
@@ -175,7 +174,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         updatedIndexes = nil
         movedIndexes = nil
     }
-
+    
     func controller(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
         didChange anObject: Any,

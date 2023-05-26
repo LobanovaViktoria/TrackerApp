@@ -14,8 +14,8 @@
             filePath = "Tracker/CoreData/TrackerRecordStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
             landmarkName = "addNewTrackerRecord(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "Tracker/CoreData/TrackerRecordStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
             landmarkName = "deleteTrackerRecord(_:)"
             landmarkType = "7">
             <Locations>
@@ -93,58 +93,10 @@
             filePath = "Tracker/Struct/TrackerCategory.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "16"
-            endingLineNumber = "16"
+            startingLineNumber = "9"
+            endingLineNumber = "9"
             landmarkName = "visibleTrackers(filterString:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2596DB6D-7163-4551-B384-C05955CC4E97"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/Struct/TrackerCategory.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18"
-            landmarkName = "visibleTrackers(filterString:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2596DB6D-7163-4551-B384-C05955CC4E97 - f40bde157271b4fb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackerCategory.visibleTrackers(filterString: Swift.String) -&gt; Swift.Array&lt;Tracker.Tracker&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/Struct/TrackerCategory.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "124">
-               </Location>
-               <Location
-                  uuid = "2596DB6D-7163-4551-B384-C05955CC4E97 - 33b9ff430ce1b553"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Tracker.Tracker) -&gt; Swift.Bool in Tracker.TrackerCategory.visibleTrackers(filterString: Swift.String) -&gt; Swift.Array&lt;Tracker.Tracker&gt;"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/Struct/TrackerCategory.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "60">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

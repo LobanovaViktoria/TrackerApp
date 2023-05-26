@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 26.04.2023.
-//
-
 import UIKit
 
 final class TrackersVC: UIViewController {
@@ -16,7 +9,6 @@ final class TrackersVC: UIViewController {
     
     //трекеры, которые были «выполнены» в выбранную дату
     private var completedTrackers: [TrackerRecord] = []
-    
     
     //отображается при поиске и/или изменении дня недели
     private var visibleCategories: [TrackerCategory] = []
@@ -85,10 +77,9 @@ final class TrackersVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        visibleCategories = trackerCategoryStore.trackerCategories
-        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
         setDayOfWeek()
-        //updateCategories()
+        updateCategories()
+        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
         makeNavBar()
         addSubviews()
         setupLayoutsearchTextFieldAndButton()
@@ -97,7 +88,6 @@ final class TrackersVC: UIViewController {
     }
     
     private func makeNavBar() {
-        
         if let navBar = navigationController?.navigationBar {
             title = "Трекеры"
             let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTracker))
@@ -187,12 +177,13 @@ final class TrackersVC: UIViewController {
     
     private func updateCategories() {
         var newCategories: [TrackerCategory] = []
+        visibleCategories = trackerCategoryStore.trackerCategories
         for category in visibleCategories {
             var newTrackers: [Tracker] = []
             for tracker in category.visibleTrackers(filterString: searchText) {
                 guard let schedule = tracker.schedule else { return }
                 let scheduleInts = schedule.map { $0.numberOfDay }
-                if let day = currentDate, scheduleInts.contains(day) &&  (searchText.isEmpty || tracker.name.contains(searchText)) {
+                if let day = currentDate, scheduleInts.contains(day) {
                     newTrackers.append(tracker)
                 }
             }
@@ -309,14 +300,14 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
 
 extension TrackersVC: CreateTrackerVCDelegate {
     
-    func createTracker(_ tracker: Tracker, categoryName: String) {
+    func createTracker(
+        _ tracker: Tracker, categoryName: String
+    ) {
         var categoryToUpdate: TrackerCategory?
-        var index: Int?
-        var categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
+        let categories: [TrackerCategory] = trackerCategoryStore.trackerCategories
         for i in 0..<categories.count {
             if categories[i].name == categoryName {
                 categoryToUpdate = categories[i]
-                index = i
             }
         }
         if categoryToUpdate != nil {
@@ -324,16 +315,19 @@ extension TrackersVC: CreateTrackerVCDelegate {
         } else {
             let newCategory = TrackerCategory(name: categoryName, trackers: [tracker])
             categoryToUpdate = newCategory
-            try! trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
+            try? trackerCategoryStore.addNewTrackerCategory(categoryToUpdate!)
         }
+        updateCategories()
+        dismiss(animated: true)
     }
 }
-
 
 extension TrackersVC {
     
     @objc func textFieldChanged() {
         searchText = searchTextField.text ?? ""
+        imageView.image = searchText.isEmpty ? UIImage(named: "star") : UIImage(named: "notFound")
+        label.text = searchText.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
         widthAnchor?.constant = 85
         visibleCategories = trackerCategoryStore.predicateFetch(nameTracker: searchText)
         collectionView.reloadData()
@@ -374,4 +368,3 @@ extension TrackersVC: TrackerCategoryStoreDelegate {
         collectionView.reloadData()
     }
 }
-

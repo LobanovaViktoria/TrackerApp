@@ -1,10 +1,3 @@
-//
-//  ScheduleVC.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 29.04.2023.
-//
-
 import UIKit
 
 protocol ScheduleVCDelegate: AnyObject {
@@ -152,6 +145,7 @@ extension ScheduleVC: UITableViewDelegate {
 extension ScheduleVC: WeekDayTableViewCellDelegate {
     
     func stateChanged(for day: WeekDay, isOn: Bool) {
+        
         if isOn {
             schedule.append(day)
         } else {

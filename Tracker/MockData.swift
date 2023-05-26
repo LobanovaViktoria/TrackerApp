@@ -1,10 +1,3 @@
-//
-//  MockData.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 10.05.2023.
-//
-
 import Foundation
 
 class MockData {

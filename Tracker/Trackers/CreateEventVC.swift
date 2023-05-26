@@ -1,10 +1,3 @@
-//
-//  CreateRegularEventVC.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 27.04.2023.
-//
-
 import UIKit
 
 enum Event {
@@ -39,11 +32,23 @@ class CreateEventVC: UIViewController {
     private let limitNumberOfCharacters = 38
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
-    private var schedule: [WeekDay] = []
+    private var schedule: [WeekDay] = [] {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
     private var selectedEmojiCell: IndexPath? = nil
     private var selectedColorCell: IndexPath? = nil
-    private var selectedEmoji: String = ""
-    private var selectedColor: UIColor = .color2
+    private var selectedEmoji: String = "" {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
+    private var selectedColor: UIColor? = nil {
+        didSet {
+            updateCreateEventButton()
+        }
+    }
     private var scheduleSubTitle: String = ""
     private var dayOfWeek: [String] = []
     public weak var delegate: CreateEventVCDelegate?
@@ -60,7 +65,7 @@ class CreateEventVC: UIViewController {
     private var contentSize: CGSize {
         CGSize(width: view.frame.width, height: view.frame.height + 400)
     }
-  
+    
     private lazy var label: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -81,6 +86,7 @@ class CreateEventVC: UIViewController {
         textField.font = .systemFont(ofSize: 17)
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
+        UITextField.appearance().clearButtonMode = .whileEditing
         textField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         return textField
     }()
@@ -171,8 +177,8 @@ class CreateEventVC: UIViewController {
         collectionView.dataSource = self
         return collectionView
     }()
-
-        private lazy var buttonBackgroundView: UIView = {
+    
+    private lazy var buttonBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -186,6 +192,7 @@ class CreateEventVC: UIViewController {
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(createEventButtonAction), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = false
         return button
     }()
     
@@ -219,9 +226,16 @@ class CreateEventVC: UIViewController {
         emojiAndColorCollectionView.allowsMultipleSelection = true
     }
     
+    func updateCreateEventButton() {
+        createEventButton.isEnabled = textField.text?.isEmpty == false && selectedColor != nil && !selectedEmoji.isEmpty
+        if event == .regular {
+            createEventButton.isEnabled = createEventButton.isEnabled && !schedule.isEmpty
+        }
+    }
+    
     @objc func createEventButtonAction() {
         let tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
-        delegate?.createTracker(tracker, categoryName: "Категория 2")
+        delegate?.createTracker(tracker, categoryName: "Важное")
         dismiss(animated: true)
     }
     
@@ -239,7 +253,7 @@ class CreateEventVC: UIViewController {
         scheduleVC.delegate = self
         present(scheduleVC, animated: true)
     }
-   
+    
     private func addSubviews() {
         view.addSubview(scrollView)
         scrollView.addSubview(label)
@@ -254,7 +268,6 @@ class CreateEventVC: UIViewController {
             scheduleButton.addSubview(forwardImage2)
         }
         updateScheduleButton()
-//        scrollView.addSubview(emojiView)
         scrollView.addSubview(emojiAndColorCollectionView)
         scrollView.addSubview(buttonBackgroundView)
         buttonBackgroundView.addSubview(createEventButton)
@@ -279,11 +292,11 @@ class CreateEventVC: UIViewController {
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
-          
+            
             errorLabel.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0),
             errorLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             heightAnchor!,
-           
+            
             createEventView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 16),
             createEventView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             createEventView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -342,23 +355,24 @@ class CreateEventVC: UIViewController {
         if scheduleSubTitle == "" {
             scheduleButton.addSubview(scheduleButtonTitle)
             NSLayoutConstraint.activate([
-            scheduleButtonTitle.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
-            scheduleButtonTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16)
+                scheduleButtonTitle.centerYAnchor.constraint(equalTo: scheduleButton.centerYAnchor),
+                scheduleButtonTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16)
             ])
         } else {
             scheduleButton.addSubview(scheduleButtonTitle)
             scheduleButton.addSubview(scheduleButtonSubTitle)
             NSLayoutConstraint.activate([
-            scheduleButtonTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
-            scheduleButtonTitle.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15),
-            scheduleButtonSubTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
-            scheduleButtonSubTitle.bottomAnchor.constraint(equalTo: scheduleButton.bottomAnchor, constant: -13)
+                scheduleButtonTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
+                scheduleButtonTitle.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15),
+                scheduleButtonSubTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
+                scheduleButtonSubTitle.bottomAnchor.constraint(equalTo: scheduleButton.bottomAnchor, constant: -13)
             ])
             scheduleButtonSubTitle.text = scheduleSubTitle
         }
     }
     
     @objc func textFieldChanged() {
+        updateCreateEventButton()
         guard let number = textField.text?.count else { return }
         numberOfCharacters = number
         if numberOfCharacters < limitNumberOfCharacters {
@@ -380,7 +394,6 @@ extension UITextField {
 }
 
 extension CreateEventVC: UITextFieldDelegate {
-
     func textField(
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
@@ -389,13 +402,12 @@ extension CreateEventVC: UITextFieldDelegate {
         let maxLenght = limitNumberOfCharacters
         let currentString = (textField.text ?? "") as NSString
         let newString = currentString.replacingCharacters(in: range, with: string)
-
+        
         return newString.count <= maxLenght
     }
 }
 
 extension CreateEventVC: ScheduleVCDelegate {
-    
     func createSchedule(schedule: [WeekDay]) {
         self.schedule = schedule
         let scheduleString = schedule.map { $0.shortName }.joined(separator: ", ")
@@ -412,7 +424,7 @@ extension CreateEventVC: UICollectionViewDataSource {
         } else if section == 1 {
             returnValue = colors.count
         }
-    return returnValue
+        return returnValue
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -447,9 +459,9 @@ extension CreateEventVC: UICollectionViewDelegate {
                 collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
                 collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .white
             }
-                cell?.backgroundColor = .lightGray
-                selectedEmoji = cell?.emojiLabel.text ?? ""
-                selectedEmojiCell = indexPath
+            cell?.backgroundColor = .lightGray
+            selectedEmoji = cell?.emojiLabel.text ?? ""
+            selectedEmojiCell = indexPath
         } else if section == 1 {
             if selectedColorCell != nil {
                 collectionView.deselectItem(at: selectedColorCell!, animated: true)

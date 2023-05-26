@@ -1,10 +1,3 @@
-//
-//  EmojiAndColorCollectionViewCell.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 17.05.2023.
-//
-
 import UIKit
 
 final class EmojiAndColorCollectionViewCell: UICollectionViewCell {
@@ -49,6 +42,4 @@ final class EmojiAndColorCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
 }

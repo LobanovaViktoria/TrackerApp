@@ -1,10 +1,3 @@
-//
-//  TrackerStore.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 18.05.2023.
-//
-
 import Foundation
 import CoreData
 
@@ -16,7 +9,7 @@ class TrackerStore {
         let context = DatabaseManager.shared.context
         self.init(context: context)
     }
-
+    
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -48,19 +41,13 @@ class TrackerStore {
         guard let uuid = data.id else {
             throw DatabaseError.someError
         }
-        
         guard let emoji = data.emoji else {
             throw DatabaseError.someError
         }
-        
         guard let schedule = data.schedule else {
             throw DatabaseError.someError
-        }
-        
+        }        
         guard let color = data.color else {
-            throw DatabaseError.someError
-        }
-        guard let category = data.category else {
             throw DatabaseError.someError
         }
         return Tracker(
