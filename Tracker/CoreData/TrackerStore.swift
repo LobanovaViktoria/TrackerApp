@@ -28,7 +28,7 @@ class TrackerStore {
     }
     
     func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
-        trackerCoreData.name = tracker.name
+        trackerCoreData.nameTracker = tracker.name
         trackerCoreData.id = tracker.id
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = tracker.schedule?.compactMap { $0.rawValue }
@@ -42,7 +42,7 @@ class TrackerStore {
     }
     
     func tracker(from data: TrackerCoreData) throws -> Tracker {
-        guard let name = data.name else {
+        guard let name = data.nameTracker else {
             throw DatabaseError.someError
         }
         guard let uuid = data.id else {
@@ -60,7 +60,9 @@ class TrackerStore {
         guard let color = data.color else {
             throw DatabaseError.someError
         }
-        
+        guard let category = data.category else {
+            throw DatabaseError.someError
+        }
         return Tracker(
             id: uuid,
             name: name,

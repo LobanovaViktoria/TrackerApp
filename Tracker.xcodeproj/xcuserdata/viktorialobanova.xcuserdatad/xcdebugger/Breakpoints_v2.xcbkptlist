@@ -7,17 +7,144 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4057D3BF-54C3-4230-BC2F-ECE8968394FD"
+            uuid = "C945DF03-5AD8-44DC-9782-E12BDDF2D1FF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Tracker/CoreData/TrackerCategoryStore.swift"
+            filePath = "Tracker/CoreData/TrackerRecordStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "updateExistingTrackerCategory(_:with:)"
+            startingLineNumber = "27"
+            endingLineNumber = "27"
+            landmarkName = "addNewTrackerRecord(_:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D68B9990-AC8F-4812-A0CE-3CF1D44843DD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/CoreData/TrackerRecordStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
+            landmarkName = "deleteTrackerRecord(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D68B9990-AC8F-4812-A0CE-3CF1D44843DD - fd7ebcb866df2e67"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerRecordStore.updateExistingTrackerRecord(_: Tracker.TrackerRecordCoreData, with: Tracker.TrackerRecord) -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/CoreData/TrackerRecordStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "33"
+                  endingLineNumber = "33"
+                  offsetFromSymbolStart = "180">
+               </Location>
+               <Location
+                  uuid = "D68B9990-AC8F-4812-A0CE-3CF1D44843DD - 5fcc7aad66e4ee45"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerRecordStore.deleteTrackerRecord(Tracker.TrackerRecord) throws -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/CoreData/TrackerRecordStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "34"
+                  endingLineNumber = "34"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  uuid = "D68B9990-AC8F-4812-A0CE-3CF1D44843DD - 5fcc7aad66e4eea4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerRecordStore.deleteTrackerRecord(Tracker.TrackerRecord) throws -&gt; ()"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/CoreData/TrackerRecordStore.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "33"
+                  endingLineNumber = "33"
+                  offsetFromSymbolStart = "52">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "33663365-B85D-4D4B-B732-7247DFBD9A25"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Struct/TrackerCategory.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "visibleTrackers(filterString:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2596DB6D-7163-4551-B384-C05955CC4E97"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/Struct/TrackerCategory.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "visibleTrackers(filterString:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2596DB6D-7163-4551-B384-C05955CC4E97 - f40bde157271b4fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tracker.TrackerCategory.visibleTrackers(filterString: Swift.String) -&gt; Swift.Array&lt;Tracker.Tracker&gt;"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/Struct/TrackerCategory.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "124">
+               </Location>
+               <Location
+                  uuid = "2596DB6D-7163-4551-B384-C05955CC4E97 - 33b9ff430ce1b553"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Tracker.Tracker) -&gt; Swift.Bool in Tracker.TrackerCategory.visibleTrackers(filterString: Swift.String) -&gt; Swift.Array&lt;Tracker.Tracker&gt;"
+                  moduleName = "Tracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/Struct/TrackerCategory.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "60">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

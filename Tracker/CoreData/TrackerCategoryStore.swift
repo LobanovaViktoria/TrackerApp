@@ -33,6 +33,7 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
 class TrackerCategoryStore: NSObject {
     
     static let shared = TrackerCategoryStore()
+    private let trackerStore = TrackerStore()
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
     weak var delegate: TrackerCategoryStoreDelegate?
@@ -62,7 +63,7 @@ class TrackerCategoryStore: NSObject {
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true)
+            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.nameCategory, ascending: true)
         ]
         let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -82,25 +83,24 @@ class TrackerCategoryStore: NSObject {
     }
     
     func updateExistingTrackerCategory(_ trackerCategoryCoreData: TrackerCategoryCoreData, with category: TrackerCategory) {
-        trackerCategoryCoreData.name = category.name
+        trackerCategoryCoreData.nameCategory = category.name
         for tracker in category.trackers {
             let track = TrackerCoreData(context: context)
             track.id = tracker.id
-            track.name = tracker.name
+            track.nameTracker = tracker.name
             track.color = tracker.color?.hexString
             track.emoji = tracker.emoji
             track.schedule = tracker.schedule?.compactMap { $0.rawValue }
-            
             trackerCategoryCoreData.addToTrackers(track)
         }
     }
     
     func addTracker(_ tracker: Tracker, to trackerCategory: TrackerCategory) throws {
         let category = fetchedResultsController.fetchedObjects?.first {
-            $0.name == trackerCategory.name
+            $0.nameCategory == trackerCategory.name
         }
         let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.name = tracker.name
+        trackerCoreData.nameTracker = tracker.name
         trackerCoreData.id = tracker.id
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = tracker.schedule?.compactMap { $0.rawValue }
@@ -111,14 +111,14 @@ class TrackerCategoryStore: NSObject {
     }
     
     func trackerCategory(from data: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let name = data.name else {
+        guard let name = data.nameCategory else {
             throw TrackerCategoryStoreError.decodingErrorInvalidName
         }
         let trackers: [Tracker] = data.trackers?.compactMap { tracker in
             guard let trackerCoreData = (tracker as? TrackerCoreData) else { return nil }
             return Tracker(
                 id: trackerCoreData.id!,
-                name: trackerCoreData.name!,
+                name: trackerCoreData.nameTracker!,
                 color: trackerCoreData.color!.color,
                 emoji: trackerCoreData.emoji!,
                 schedule: trackerCoreData.schedule!.compactMap { WeekDay(rawValue: $0) }
@@ -130,6 +130,27 @@ class TrackerCategoryStore: NSObject {
         )
     }
 }
+
+extension TrackerCategoryStore {
+    func predicateFetch(nameTracker: String) -> [TrackerCategory] {
+        
+        if nameTracker.isEmpty {
+            return trackerCategories
+        } else {
+            let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+            request.returnsObjectsAsFaults = false
+            request.predicate = NSPredicate(format: "ANY trackers.nameTracker CONTAINS[cd] %@", nameTracker)
+
+            let trackerCategoriesCoreData = try! context.fetch(request)
+            guard let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)})
+            else { return [] }
+            return categories
+        }
+    }
+}
+
+// request.predicate = NSPredicate(format: "SUBQUERY(trackers, $x, ANY $x.nameTracker CONTAINS[n] \(nameTracker)).@count > 0")
+
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {

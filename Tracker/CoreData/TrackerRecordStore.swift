@@ -28,6 +28,12 @@ class TrackerRecordStore {
             updateExistingTrackerRecord(trackerRecordCoreData, with: trackerRecord)
             try context.save()
         }
+    
+    func deleteTrackerRecord(_ trackerRecord: TrackerRecord) throws {
+        let trackerRecordCoreData = TrackerRecordCoreData(context: context)
+        updateExistingTrackerRecord(trackerRecordCoreData, with: trackerRecord)
+        
+    }
         
         func updateExistingTrackerRecord(_ trackerRecordCoreData: TrackerRecordCoreData, with record: TrackerRecord) {
             trackerRecordCoreData.idTracker = record.idTracker

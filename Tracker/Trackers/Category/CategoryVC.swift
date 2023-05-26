@@ -122,7 +122,7 @@ extension CategoryVC: UITableViewDataSource {
             return UITableViewCell()
         }
         categoryCell.contentView.backgroundColor = .backgroundColor
-        categoryCell.label.text = "Важное"
+        categoryCell.label.text = "Категория 2"
         
         if indexPath.row == 0 {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
@@ -130,6 +130,7 @@ extension CategoryVC: UITableViewDataSource {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
         categoryCell.backgroundColor = .backgroundColor
+        categoryCell.selectionStyle = .none
         return categoryCell
     }
 }

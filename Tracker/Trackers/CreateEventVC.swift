@@ -221,7 +221,7 @@ class CreateEventVC: UIViewController {
     
     @objc func createEventButtonAction() {
         let tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
-        delegate?.createTracker(tracker, categoryName: "Важное")
+        delegate?.createTracker(tracker, categoryName: "Категория 2")
         dismiss(animated: true)
     }
     
