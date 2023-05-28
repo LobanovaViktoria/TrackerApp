@@ -1,10 +1,3 @@
-//
-//  CategoryVC.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 03.05.2023.
-//
-
 import UIKit
 
 class CategoryVC: UIViewController {
@@ -130,6 +123,7 @@ extension CategoryVC: UITableViewDataSource {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
         categoryCell.backgroundColor = .backgroundColor
+        categoryCell.selectionStyle = .none
         return categoryCell
     }
 }

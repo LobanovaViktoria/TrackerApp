@@ -1,10 +1,3 @@
-//
-//  Color+Extension.swift
-//  Tracker
-//
-//  Created by Viktoria Lobanova on 27.04.2023.
-//
-
 import UIKit
 
 extension UIColor {
@@ -14,6 +7,7 @@ extension UIColor {
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor.gray }
     static var ypRed: UIColor { UIColor(named: "ypRed") ?? UIColor.red }
     static var ypBlack: UIColor { UIColor(named: "ypBlack") ?? UIColor.black }
+    static var lightGray: UIColor { UIColor(named: "lightGray") ?? UIColor.gray }
     static var ypBlue: UIColor { UIColor(named: "ypBlue") ?? UIColor.blue }
     static var color1: UIColor { UIColor(named: "Color1") ?? UIColor.red }
     static var color2: UIColor { UIColor(named: "Color2") ?? UIColor.red }
@@ -34,5 +28,18 @@ extension UIColor {
     static var color17: UIColor { UIColor(named: "Color17") ?? UIColor.red }
     static var color18: UIColor { UIColor(named: "Color18") ?? UIColor.red }
     static var switchColor: UIColor { ypBlue }
+    
+    var hexString: String {
+        let components = self.cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+        return String.init(
+            format: "%02lX%02lX%02lX",
+            lroundf(Float(r * 255)),
+            lroundf(Float(g * 255)),
+            lroundf(Float(b * 255))
+        )
+    }
 }
 
