@@ -231,6 +231,12 @@ class CreateEventVC: UIViewController {
         if event == .regular {
             createEventButton.isEnabled = createEventButton.isEnabled && !schedule.isEmpty
         }
+        
+        if createEventButton.isEnabled {
+            createEventButton.backgroundColor = .ypBlack
+        } else {
+            createEventButton.backgroundColor = .gray
+        }
     }
     
     @objc func createEventButtonAction() {
@@ -470,15 +476,23 @@ extension CreateEventVC: UICollectionViewDelegate {
             cell?.layer.borderWidth = 3
             cell?.layer.cornerRadius = 8
             cell?.layer.borderColor = UIColor.lightGray.cgColor
-            selectedColor = cell?.colorView.backgroundColor ?? .color2
+            selectedColor = cell?.colorView.backgroundColor ?? nil
             selectedColorCell = indexPath
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
+        collectionView.deselectItem(at: indexPath, animated: true)
         cell?.backgroundColor = .white
         cell?.layer.borderWidth = 0
+        if indexPath.section == 0 {
+            selectedEmoji = ""
+            selectedEmojiCell = nil
+        } else {
+            selectedColor = nil
+            selectedColorCell = nil
+        }
     }
 }
 
