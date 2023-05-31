@@ -40,17 +40,25 @@ final class TrackersVC: UIViewController {
     
     private lazy var datePicker = UIDatePicker()
     
-    private lazy var searchTextField: UISearchTextField = {
-        let searchTextField = UISearchTextField()
+    private lazy var searchTextField: UITextField = {
+        let searchTextField = UITextField()
         searchTextField.placeholder = "Поиск"
         searchTextField.textColor = .ypBlack
         searchTextField.font = .systemFont(ofSize: 17)
         searchTextField.backgroundColor = .findColor
         searchTextField.layer.cornerRadius = 10
+        searchTextField.indent(size: 30)
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
         searchTextField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         searchTextField.delegate = self
         return searchTextField
+    }()
+    
+    private lazy var loupeImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "loupe")
+        return imageView
     }()
     
     private lazy var cancelEditingButton: UIButton = {
@@ -131,6 +139,7 @@ final class TrackersVC: UIViewController {
         view.addSubview(imageView)
         view.addSubview(label)
         view.addSubview(searchTextField)
+        searchTextField.addSubview(loupeImageView)
         view.addSubview(cancelEditingButton)
         view.addSubview(collectionView)
     }
@@ -143,6 +152,11 @@ final class TrackersVC: UIViewController {
             searchTextField.trailingAnchor.constraint(equalTo: cancelEditingButton.leadingAnchor, constant: -5),
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 7),
             searchTextField.heightAnchor.constraint(equalToConstant: 36),
+            
+            loupeImageView.heightAnchor.constraint(equalToConstant: 16),
+            loupeImageView.widthAnchor.constraint(equalToConstant: 16),
+            loupeImageView.leadingAnchor.constraint(equalTo: searchTextField.leadingAnchor, constant: 8),
+            loupeImageView.centerYAnchor.constraint(equalTo: searchTextField.centerYAnchor),
             
             cancelEditingButton.centerXAnchor.constraint(equalTo: searchTextField.centerXAnchor),
             cancelEditingButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
