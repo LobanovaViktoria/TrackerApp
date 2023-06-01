@@ -9,7 +9,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
        
         if UserDefaults.standard.value(forKey: "isOnbordingShown") == nil {
-            window?.rootViewController = OnboardingVC()
+            window?.rootViewController = OnboardingVC.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
         } else {
             window?.rootViewController = TabBarController.configure()
         }

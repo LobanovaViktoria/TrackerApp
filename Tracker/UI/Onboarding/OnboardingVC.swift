@@ -87,7 +87,6 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
     }
     
     private func addBlueVC() {
-        
         blueVC.view.addSubview(blueVCLabel)
         blueVC.view.addSubview(BlueVCEnterButton)
         
