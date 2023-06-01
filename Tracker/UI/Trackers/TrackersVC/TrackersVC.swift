@@ -122,7 +122,7 @@ final class TrackersVC: UIViewController {
     }
     
     @objc func addTracker() {
-        let trackersVC = CreateTrackerVC()
+        let trackersVC = RegularOrIrregularEventVC()
         trackersVC.delegate = self
         present(trackersVC, animated: true)
     }
@@ -312,7 +312,7 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension TrackersVC: CreateTrackerVCDelegate {
+extension TrackersVC: RegularOrIrregularEventVCDelegate {
     
     func createTracker(
         _ tracker: Tracker, categoryName: String
