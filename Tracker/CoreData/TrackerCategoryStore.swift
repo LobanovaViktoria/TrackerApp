@@ -73,6 +73,26 @@ class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
+    func updateCategoryName(_ newCategoryName: String, _ editableCategory: TrackerCategory) throws {
+        let category = fetchedResultsController.fetchedObjects?.first {
+            $0.nameCategory == editableCategory.name
+        }
+        category?.nameCategory = newCategoryName
+        try context.save()
+    }
+    
+    func deleteCategory(_ categoryToDelete: TrackerCategory) throws {
+        let category = fetchedResultsController.fetchedObjects?.first {
+            $0.nameCategory == categoryToDelete.name
+        }
+        if let category = category {
+            context.delete(category)
+            try context.save()
+        }
+    }
+    
+    //func delete
+    
     func updateExistingTrackerCategory(
         _ trackerCategoryCoreData: TrackerCategoryCoreData,
         with category: TrackerCategory)

@@ -1,8 +1,17 @@
 import UIKit
 
+protocol CategoryVCDelegate: AnyObject {
+    func createCategory(category: TrackerCategory)
+}
+
 class CategoryVC: UIViewController {
+    public weak var delegate: CategoryVCDelegate?
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private var categories: [TrackerCategory] = []
     
-    private lazy var titleVC: UILabel = {
+    var selectedCategory: TrackerCategory?
+   
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.text = "Категория"
@@ -40,17 +49,14 @@ class CategoryVC: UIViewController {
         return button
     }()
     
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
-        var width = view.frame.width - 16*2
-        var height = 75
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.identifier)
-        tableView.layer.cornerRadius = 16
         tableView.separatorColor = .ypGray
-        tableView.backgroundColor = .backgroundColor
-        tableView.frame = CGRect(x: 16, y: 79, width: Int(width), height: height)
+        tableView.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.allowsMultipleSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -58,27 +64,29 @@ class CategoryVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        trackerCategoryStore.delegate = self
         addSubviews()
         setupLayout()
+        categories = trackerCategoryStore.trackerCategories
     }
     
     private func addSubviews() {
-        view.addSubview(titleVC)
+        view.addSubview(titleLabel)
         view.addSubview(imageView)
         view.addSubview(label)
         view.addSubview(addCategoryButton)
         view.addSubview(tableView)
     }
     
-    private func setupLayout() {
+    func setupLayout() {
         NSLayoutConstraint.activate([
-            titleVC.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleVC.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 27),
             
             imageView.widthAnchor.constraint(equalToConstant: 80),
             imageView.heightAnchor.constraint(equalToConstant: 80),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 400),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             label.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
@@ -88,14 +96,56 @@ class CategoryVC: UIViewController {
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            addCategoryButton.heightAnchor.constraint(equalToConstant: 60)
-        ])
+            addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
+            
+            tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -10),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            ])
     }
     
     @objc
     private func addCategoryButtonAction() {
-        dismiss(animated: true)
-        print("addCategoryButtonAction")
+        let createCategoryVC = CreateCategoryVC()
+        present(createCategoryVC, animated: true)
+    }
+    
+    private func actionSheet(deleteCategoryName: TrackerCategory) {
+        let alert = UIAlertController(title: "Эта категория точно не нужна?",
+                                      message: nil,
+                                      preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Удалить",
+                                      style: .destructive) { _ in
+          try? self.trackerCategoryStore.deleteCategory(deleteCategoryName)
+        })
+        alert.addAction(UIAlertAction(title: "Отменить",
+                                      style: .cancel) { _ in
+           
+        })
+
+       self.present(alert, animated: true, completion: nil)
+    }
+    
+    func makeContextMenu(_ indexPath: IndexPath) -> UIMenu {
+        let category = categories[indexPath.row]
+        let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
+            let editCategoryVC = EditCategoryVC()
+            editCategoryVC.editableCategory = category
+            self?.present(editCategoryVC, animated: true)
+        }
+        let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
+            self?.actionSheet(deleteCategoryName: category)
+        }
+        return UIMenu(children: [rename, delete])
+    }
+    
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+                return self.makeContextMenu(indexPath)
+            })
     }
 }
 
@@ -104,7 +154,13 @@ extension CategoryVC: UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        return 1
+        let count = categories.count
+        tableView.isHidden = count == 0
+        return count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
     }
     
     func tableView(
@@ -114,15 +170,23 @@ extension CategoryVC: UITableViewDataSource {
         guard let categoryCell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier) as? CategoryTableViewCell else {
             return UITableViewCell()
         }
-        categoryCell.contentView.backgroundColor = .backgroundColor
-        categoryCell.label.text = "Важное"
-        
-        if indexPath.row == 0 {
-            categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        let categoryName = categories[indexPath.row].name
+        categoryCell.label.text = categoryName
+        if indexPath.row == categories.count - 1 {
+            categoryCell.separatorInset = UIEdgeInsets(top: 0, left: categoryCell.bounds.size.width + 200, bottom: 0, right: 0);
+            categoryCell.contentView.clipsToBounds = true
+            categoryCell.contentView.layer.cornerRadius = 16
+            categoryCell.contentView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+            print("Index path: \(indexPath) category: \(categories[indexPath.row].name)")
+        } else if indexPath.row == 0 {
+            categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            categoryCell.contentView.clipsToBounds = true
+            categoryCell.contentView.layer.cornerRadius = 16
+            categoryCell.contentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         } else {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
-        categoryCell.backgroundColor = .backgroundColor
+        categoryCell.checkmarkImage.isHidden = selectedCategory?.name != categoryName
         categoryCell.selectionStyle = .none
         return categoryCell
     }
@@ -134,6 +198,27 @@ extension CategoryVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        guard let categoryCell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else {
+            return
+        }
+        guard let selectedCategoryName = categoryCell.label.text else { return }
+        categoryCell.checkmarkImage.isHidden = !categoryCell.checkmarkImage.isHidden
+        let category = TrackerCategory(name: selectedCategoryName, trackers: [])
+        delegate?.createCategory(category: category)
+        dismiss(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let categoryCell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else {
+            return
+        }
+        categoryCell.checkmarkImage.isHidden = true
+    }
+}
+
+extension CategoryVC: TrackerCategoryStoreDelegate {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        categories = trackerCategoryStore.trackerCategories
+        tableView.reloadData()
     }
 }

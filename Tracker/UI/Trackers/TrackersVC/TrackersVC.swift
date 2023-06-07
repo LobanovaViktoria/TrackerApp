@@ -1,8 +1,8 @@
 import UIKit
 
 final class TrackersVC: UIViewController {
-    private let trackerCategoryStore = TrackerCategoryStore()
-    private let trackerRecordStore = TrackerRecordStore()
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private let trackerRecordStore = TrackerRecordStore.shared
     
     //список категорий и вложенных в них трекеров
     private var categories: [TrackerCategory] = []//MockData.categories
@@ -90,7 +90,7 @@ final class TrackersVC: UIViewController {
         completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
         makeNavBar()
         addSubviews()
-        setupLayoutsearchTextFieldAndButton()
+        setupLayoutSearchTextFieldAndButton()
         setupLayout()
         trackerCategoryStore.delegate = self
     }
@@ -144,7 +144,7 @@ final class TrackersVC: UIViewController {
         view.addSubview(collectionView)
     }
     
-    private func setupLayoutsearchTextFieldAndButton() {
+    private func setupLayoutSearchTextFieldAndButton() {
         widthAnchor = cancelEditingButton.widthAnchor.constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
@@ -261,7 +261,7 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: 167, height: 148)
+        return CGSize(width: (self.collectionView.bounds.width - 7) / 2, height: 148)
     }
     
     func collectionView(
@@ -269,7 +269,7 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 10
+        return 0
     }
     
     func collectionView(
@@ -277,7 +277,7 @@ extension TrackersVC: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 10
+        return 7
     }
     
     func collectionView(
@@ -372,7 +372,7 @@ extension TrackersVC: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        setupLayoutsearchTextFieldAndButton()
+        setupLayoutSearchTextFieldAndButton()
     }
 }
 
