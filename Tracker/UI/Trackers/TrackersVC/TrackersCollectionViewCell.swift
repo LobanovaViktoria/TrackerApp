@@ -73,7 +73,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(checkButton)
         
         NSLayoutConstraint.activate([
-    
+            
             trackerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             trackerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trackerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -58),
@@ -139,7 +139,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         } else {
             checkButton.alpha = 1
         }
-       
+        
         checkButton.isEnabled = isEnabled
         
         if completedCount == 0 {

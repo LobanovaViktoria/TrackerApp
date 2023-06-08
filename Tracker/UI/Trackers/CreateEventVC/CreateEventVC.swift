@@ -38,7 +38,7 @@ class CreateEventVC: UIViewController {
         }
     }
     
-    private var category: TrackerCategory? = nil {
+    private var category: TrackerCategoryModel? = nil {
         didSet {
             updateCreateEventButton()
         }
@@ -58,7 +58,7 @@ class CreateEventVC: UIViewController {
     private var scheduleSubTitle: String = ""
     private var dayOfWeek: [String] = []
     
-    var selectedCategory: TrackerCategory?
+    var selectedCategory: TrackerCategoryModel?
     var categorySubTitle: String = ""
     
     public weak var delegate: CreateEventVCDelegate?
@@ -265,10 +265,10 @@ class CreateEventVC: UIViewController {
     @objc func createEventButtonAction() {
         var tracker: Tracker?
         if event == .regular {
-        tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+            tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
         } else {
             schedule = WeekDay.allCases
-        tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+            tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
         }
         guard let tracker = tracker else { return }
         delegate?.createTracker(tracker, categoryName: category?.name ?? "Без категории")
@@ -280,9 +280,7 @@ class CreateEventVC: UIViewController {
     }
     
     @objc private func categoryButtonAction() {
-        let categoryVC = CategoryVC()
-        categoryVC.delegate = self
-        categoryVC.selectedCategory = category
+        let categoryVC = CategoryListView(delegate: self, selectedCategory: category)
         present(categoryVC, animated: true)
     }
     
@@ -478,8 +476,8 @@ extension CreateEventVC: ScheduleVCDelegate {
     }
 }
 
-extension CreateEventVC: CategoryVCDelegate {
-    func createCategory(category: TrackerCategory) {
+extension CreateEventVC: CategoryListViewModelDelegate {
+    func createCategory(category: TrackerCategoryModel) {
         self.category = category
         let categoryString = category.name
         categorySubTitle = categoryString

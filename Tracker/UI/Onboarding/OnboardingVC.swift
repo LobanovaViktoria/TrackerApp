@@ -131,17 +131,18 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
             fatalError("Invalid Configuration")
         }
         window.rootViewController = TabBarController.configure()
-        
         UserDefaults.standard.set(true, forKey: "isOnbordingShown")
     }
     
     // MARK: - UIPageViewControllerDataSource
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
         }
-        
         let previousIndex = viewControllerIndex - 1
         guard previousIndex >= 0 else {
             return pages.last
@@ -149,21 +150,28 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
         return pages[previousIndex]
     }
     
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
             return nil
         }
         let nextIndex = viewControllerIndex + 1
-        
         guard nextIndex < pages.count else {
             return pages.first
         }
         return pages[nextIndex]
     }
-
+    
     // MARK: - UIPageViewControllerDelegate
     
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool)
+    {
         if let currentViewController = pageViewController.viewControllers?.first,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex

@@ -1,6 +1,11 @@
 import UIKit
 
+protocol CreateCategoryVCDelegate {
+    func createdCategory(_ category: TrackerCategoryModel)
+}
+
 class CreateCategoryVC: UIViewController {
+    var delegate: CreateCategoryVCDelegate?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -38,7 +43,7 @@ class CreateCategoryVC: UIViewController {
         return button
     }()
     
-    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     @objc func textFieldChanged() {
         if textField.text != "" {
@@ -51,10 +56,10 @@ class CreateCategoryVC: UIViewController {
     }
     
     @objc func addCategoryButtonAction() {
-     print("создать категорию")
         if let categoryName = textField.text {
-            let category = TrackerCategory(name: categoryName, trackers: [])
+            let category = TrackerCategoryModel(name: categoryName, trackers: [])
             try? trackerCategoryStore.addNewTrackerCategory(category)
+            delegate?.createdCategory(category)
             dismiss(animated: true)
         }
     }

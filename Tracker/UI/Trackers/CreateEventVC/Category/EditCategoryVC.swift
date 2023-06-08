@@ -2,8 +2,7 @@ import UIKit
 
 class EditCategoryVC: UIViewController {
     
-    var editableCategory: TrackerCategory?
-    private let categoryVC = CategoryVC()
+    var editableCategory: TrackerCategoryModel?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -40,7 +39,7 @@ class EditCategoryVC: UIViewController {
         return button
     }()
     
-    private let trackerCategoryStore = TrackerCategoryStore.shared
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     @objc func textFieldChanged() {
         if textField.text != "" {
@@ -53,11 +52,9 @@ class EditCategoryVC: UIViewController {
     }
     
     @objc func editCategoryButtonAction() {
-     print("изменить название категории")
         guard let editableCategory = editableCategory else { return }
         if let newName = textField.text {
             try? trackerCategoryStore.updateCategoryName(newName, editableCategory)
-            
             dismiss(animated: true)
         }
     }
@@ -91,6 +88,6 @@ class EditCategoryVC: UIViewController {
             editCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             editCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             editCategoryButton.heightAnchor.constraint(equalToConstant: 60),
-       ])
+        ])
     }
 }

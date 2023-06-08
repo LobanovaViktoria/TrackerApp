@@ -1,16 +1,8 @@
 import UIKit
 
-protocol CategoryVCDelegate: AnyObject {
-    func createCategory(category: TrackerCategory)
-}
-
-class CategoryVC: UIViewController {
-    public weak var delegate: CategoryVCDelegate?
-    private let trackerCategoryStore = TrackerCategoryStore.shared
-    private var categories: [TrackerCategory] = []
+class CategoryListView: UIViewController {
+    private let viewModel: CategoryListViewModel
     
-    var selectedCategory: TrackerCategory?
-   
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -49,7 +41,7 @@ class CategoryVC: UIViewController {
         return button
     }()
     
-    lazy var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.identifier)
         tableView.separatorColor = .ypGray
@@ -61,13 +53,21 @@ class CategoryVC: UIViewController {
         return tableView
     }()
     
+    init(delegate: CategoryListViewModelDelegate?, selectedCategory: TrackerCategoryModel?) {
+        viewModel = CategoryListViewModel(delegate: delegate, selectedCategory: selectedCategory)
+        super.init(nibName: nil, bundle: nil)
+        viewModel.onChange = self.tableView.reloadData
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        trackerCategoryStore.delegate = self
         addSubviews()
         setupLayout()
-        categories = trackerCategoryStore.trackerCategories
     }
     
     private func addSubviews() {
@@ -102,40 +102,41 @@ class CategoryVC: UIViewController {
             tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-            ])
+        ])
     }
     
     @objc
     private func addCategoryButtonAction() {
         let createCategoryVC = CreateCategoryVC()
+        createCategoryVC.delegate = self
         present(createCategoryVC, animated: true)
     }
     
-    private func actionSheet(deleteCategoryName: TrackerCategory) {
+    private func actionSheet(categoryToDelete: TrackerCategoryModel) {
         let alert = UIAlertController(title: "Эта категория точно не нужна?",
                                       message: nil,
                                       preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Удалить",
-                                      style: .destructive) { _ in
-          try? self.trackerCategoryStore.deleteCategory(deleteCategoryName)
+                                      style: .destructive) { [weak self] _ in
+            self?.viewModel.deleteCategory(categoryToDelete)
         })
         alert.addAction(UIAlertAction(title: "Отменить",
                                       style: .cancel) { _ in
-           
+            
         })
-
-       self.present(alert, animated: true, completion: nil)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     func makeContextMenu(_ indexPath: IndexPath) -> UIMenu {
-        let category = categories[indexPath.row]
+        let category = viewModel.categories[indexPath.row]
         let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
             let editCategoryVC = EditCategoryVC()
             editCategoryVC.editableCategory = category
             self?.present(editCategoryVC, animated: true)
         }
         let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
-            self?.actionSheet(deleteCategoryName: category)
+            self?.actionSheet(categoryToDelete: category)
         }
         return UIMenu(children: [rename, delete])
     }
@@ -144,17 +145,17 @@ class CategoryVC: UIViewController {
                    contextMenuConfigurationForRowAt indexPath: IndexPath,
                    point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
-                return self.makeContextMenu(indexPath)
-            })
+            return self.makeContextMenu(indexPath)
+        })
     }
 }
 
-extension CategoryVC: UITableViewDataSource {
+extension CategoryListView: UITableViewDataSource {
     func tableView(
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        let count = categories.count
+        let count = viewModel.categories.count
         tableView.isHidden = count == 0
         return count
     }
@@ -170,14 +171,14 @@ extension CategoryVC: UITableViewDataSource {
         guard let categoryCell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier) as? CategoryTableViewCell else {
             return UITableViewCell()
         }
-        let categoryName = categories[indexPath.row].name
+        
+        let categoryName = viewModel.categories[indexPath.row].name
         categoryCell.label.text = categoryName
-        if indexPath.row == categories.count - 1 {
+        if indexPath.row == viewModel.categories.count - 1 {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: categoryCell.bounds.size.width + 200, bottom: 0, right: 0);
             categoryCell.contentView.clipsToBounds = true
             categoryCell.contentView.layer.cornerRadius = 16
             categoryCell.contentView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-            print("Index path: \(indexPath) category: \(categories[indexPath.row].name)")
         } else if indexPath.row == 0 {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             categoryCell.contentView.clipsToBounds = true
@@ -185,14 +186,15 @@ extension CategoryVC: UITableViewDataSource {
             categoryCell.contentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         } else {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            categoryCell.contentView.layer.cornerRadius = 0
         }
-        categoryCell.checkmarkImage.isHidden = selectedCategory?.name != categoryName
+        categoryCell.checkmarkImage.isHidden = viewModel.selectedCategory?.name != categoryName
         categoryCell.selectionStyle = .none
         return categoryCell
     }
 }
 
-extension CategoryVC: UITableViewDelegate {
+extension CategoryListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
@@ -203,8 +205,7 @@ extension CategoryVC: UITableViewDelegate {
         }
         guard let selectedCategoryName = categoryCell.label.text else { return }
         categoryCell.checkmarkImage.isHidden = !categoryCell.checkmarkImage.isHidden
-        let category = TrackerCategory(name: selectedCategoryName, trackers: [])
-        delegate?.createCategory(category: category)
+        viewModel.selectCategory(with: selectedCategoryName)
         dismiss(animated: true)
     }
     
@@ -216,9 +217,9 @@ extension CategoryVC: UITableViewDelegate {
     }
 }
 
-extension CategoryVC: TrackerCategoryStoreDelegate {
-    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        categories = trackerCategoryStore.trackerCategories
-        tableView.reloadData()
+extension CategoryListView: CreateCategoryVCDelegate {
+    func createdCategory(_ category: TrackerCategoryModel) {
+        viewModel.selectCategory(category)
+        viewModel.selectCategory(with: category.name)
     }
 }
