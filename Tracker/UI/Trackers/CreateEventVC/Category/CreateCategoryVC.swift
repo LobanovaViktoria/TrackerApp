@@ -11,7 +11,7 @@ class CreateCategoryVC: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Новая категория"
-        label.font = .systemFont(ofSize: 16)
+        label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

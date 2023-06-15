@@ -12,7 +12,7 @@ class ScheduleVC: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Расписание"
-        label.font = .systemFont(ofSize: 16)
+        label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

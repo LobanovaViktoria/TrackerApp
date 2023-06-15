@@ -12,10 +12,20 @@ enum Event {
             return "Новое нерегулярное событие"
         }
     }
+    
+    var editTitleText: String {
+        switch self {
+        case .regular:
+            return "Редактирование привычки"
+        case .irregular:
+            return "Редактирование привычки"
+        }
+    }
 }
 
 protocol CreateEventVCDelegate: AnyObject {
     func createTracker(_ tracker: Tracker, categoryName: String)
+    func updateTracker(_ tracker: Tracker, categoryName: String)
 }
 
 class CreateEventVC: UIViewController {
@@ -32,13 +42,14 @@ class CreateEventVC: UIViewController {
     private let limitNumberOfCharacters = 38
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
+    var editTracker: Tracker?
     private var schedule: [WeekDay] = [] {
         didSet {
             updateCreateEventButton()
         }
     }
     
-    private var category: TrackerCategoryModel? = nil {
+    var category: TrackerCategoryModel? = nil {
         didSet {
             updateCreateEventButton()
         }
@@ -79,8 +90,8 @@ class CreateEventVC: UIViewController {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.text = event.titleText
-        label.font = .systemFont(ofSize: 16)
+        label.text = editTracker == nil ? event.titleText : event.editTitleText
+        label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -150,7 +161,7 @@ class CreateEventVC: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Категория"
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -159,7 +170,7 @@ class CreateEventVC: UIViewController {
         let label = UILabel()
         label.textColor = .ypGray
         label.text = categorySubTitle
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -175,7 +186,7 @@ class CreateEventVC: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Расписание"
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -184,7 +195,7 @@ class CreateEventVC: UIViewController {
         let label = UILabel()
         label.textColor = .ypGray
         label.text = scheduleSubTitle
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -210,7 +221,8 @@ class CreateEventVC: UIViewController {
     
     private lazy var createEventButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
+        var titleButton = editTracker == nil ? "Создать" : "Сохранить"
+        button.setTitle(titleButton, for: .normal)
         button.backgroundColor = .gray
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(createEventButtonAction), for: .touchUpInside)
@@ -246,7 +258,21 @@ class CreateEventVC: UIViewController {
         view.backgroundColor = .white
         addSubviews()
         setupLayout()
+        setupEditTracker()
         emojiAndColorCollectionView.allowsMultipleSelection = true
+    }
+    
+    func setupEditTracker() {
+        if let editTracker = editTracker {
+            schedule = editTracker.schedule ?? []
+            textField.text = editTracker.name
+            selectedEmoji = editTracker.emoji ?? ""
+            selectedColor = editTracker.color ?? nil
+            createSchedule(schedule: schedule)
+            categorySubTitle = category?.name ?? ""
+            updateScheduleButton()
+            updateCategoryButton()
+        }
     }
     
     func updateCreateEventButton() {
@@ -264,14 +290,18 @@ class CreateEventVC: UIViewController {
     
     @objc func createEventButtonAction() {
         var tracker: Tracker?
-        if event == .regular {
-            tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+        if editTracker == nil {
+            if event == .regular {
+                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+            } else {
+                schedule = WeekDay.allCases
+                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+            }
+            guard let tracker = tracker else { return }
+            delegate?.createTracker(tracker, categoryName: category?.name ?? "Без категории")
         } else {
-            schedule = WeekDay.allCases
-            tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+            
         }
-        guard let tracker = tracker else { return }
-        delegate?.createTracker(tracker, categoryName: category?.name ?? "Без категории")
         dismiss(animated: true)
     }
     
@@ -402,7 +432,7 @@ class CreateEventVC: UIViewController {
             scheduleButton.addSubview(scheduleButtonSubTitle)
             NSLayoutConstraint.activate([
                 scheduleButtonTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
-                scheduleButtonTitle.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 15),
+                scheduleButtonTitle.topAnchor.constraint(equalTo: scheduleButton.topAnchor, constant: 16),
                 scheduleButtonSubTitle.leadingAnchor.constraint(equalTo: scheduleButton.leadingAnchor, constant: 16),
                 scheduleButtonSubTitle.bottomAnchor.constraint(equalTo: scheduleButton.bottomAnchor, constant: -13)
             ])
@@ -423,7 +453,7 @@ class CreateEventVC: UIViewController {
             categoryButton.addSubview(categoryButtonSubTitle)
             NSLayoutConstraint.activate([
                 categoryButtonTitle.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
-                categoryButtonTitle.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 15),
+                categoryButtonTitle.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 16),
                 categoryButtonSubTitle.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
                 categoryButtonSubTitle.bottomAnchor.constraint(equalTo: categoryButton.bottomAnchor, constant: -13)
             ])

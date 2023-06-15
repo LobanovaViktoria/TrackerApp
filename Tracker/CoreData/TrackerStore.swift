@@ -20,6 +20,18 @@ class TrackerStore {
         try context.save()
     }
     
+    func deleteTracker(_ tracker: Tracker) throws {
+        
+    }
+    
+    func updateTracker(_ newTrackerName: String, _ editableTracker: Tracker) throws {
+        let tracker = fetchedResultsController.fetchedObjects?.first {
+            $0.nameCategory == editableCategory.name
+        }
+        category?.nameCategory = newCategoryName
+        try context.save()
+    }
+    
     func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
         trackerCoreData.nameTracker = tracker.name
         trackerCoreData.id = tracker.id

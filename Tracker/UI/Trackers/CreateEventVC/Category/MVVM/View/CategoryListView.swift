@@ -7,7 +7,7 @@ class CategoryListView: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Категория"
-        label.font = .systemFont(ofSize: 16)
+        label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -25,7 +25,7 @@ class CategoryListView: UIViewController {
         label.text = "Привычки и события можно объединять по смыслу"
         label.numberOfLines = 2
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12)
+        label.font = UIFont.mediumSystemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

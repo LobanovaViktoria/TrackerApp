@@ -2,6 +2,7 @@ import UIKit
 
 protocol RegularOrIrregularEventVCDelegate: AnyObject {
     func createTracker(_ tracker: Tracker, categoryName: String)
+    func updateTracker(_ tracker: Tracker, categoryName: String)
 }
 
 class RegularOrIrregularEventVC: UIViewController {
@@ -12,7 +13,7 @@ class RegularOrIrregularEventVC: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.text = "Создание трекера"
-        label.font = .systemFont(ofSize: 16)
+        label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -83,7 +84,10 @@ class RegularOrIrregularEventVC: UIViewController {
 }
 
 extension RegularOrIrregularEventVC: CreateEventVCDelegate {
-    
+    func updateTracker(_ tracker: Tracker, categoryName: String) {
+        delegate?.updateTracker(tracker, categoryName: categoryName)
+    }
+
     func createTracker(_ tracker: Tracker, categoryName: String) {
         delegate?.createTracker(tracker, categoryName: categoryName)
     }

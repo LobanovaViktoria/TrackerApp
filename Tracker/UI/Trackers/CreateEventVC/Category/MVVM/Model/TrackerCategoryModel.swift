@@ -1,6 +1,6 @@
 import UIKit
 
-struct TrackerCategoryModel {
+struct TrackerCategoryModel: Hashable {
     let name: String
     let trackers: [Tracker]
     
