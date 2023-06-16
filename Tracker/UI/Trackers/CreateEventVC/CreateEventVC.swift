@@ -40,6 +40,8 @@ class CreateEventVC: UIViewController {
     private let event: Event
     private let nameCell = ["Категория", "Расписание"]
     private let limitNumberOfCharacters = 38
+    private let trackerStore = TrackerStore()
+    
     private var numberOfCharacters = 0
     private var heightAnchor: NSLayoutConstraint?
     var editTracker: Tracker?
@@ -48,7 +50,6 @@ class CreateEventVC: UIViewController {
             updateCreateEventButton()
         }
     }
-    
     var category: TrackerCategoryModel? = nil {
         didSet {
             updateCreateEventButton()
@@ -262,6 +263,18 @@ class CreateEventVC: UIViewController {
         emojiAndColorCollectionView.allowsMultipleSelection = true
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard let indexPathEmoji = emojies.firstIndex(where: {$0 == selectedEmoji}) else { return }
+        let cellEmoji = self.emojiAndColorCollectionView.cellForItem(at: IndexPath(row: indexPathEmoji, section: 0))
+        cellEmoji?.backgroundColor = .lightGray
+        guard let indexPathColor = colors.firstIndex(where: {$0.hexString == selectedColor?.hexString}) else { return }
+        let cellColor = self.emojiAndColorCollectionView.cellForItem(at: IndexPath(row: indexPathColor, section: 1))
+        cellColor?.layer.borderWidth = 3
+        cellColor?.layer.cornerRadius = 8
+        cellColor?.layer.borderColor = selectedColor?.withAlphaComponent(0.3).cgColor
+    }
+    
     func setupEditTracker() {
         if let editTracker = editTracker {
             schedule = editTracker.schedule ?? []
@@ -272,6 +285,8 @@ class CreateEventVC: UIViewController {
             categorySubTitle = category?.name ?? ""
             updateScheduleButton()
             updateCategoryButton()
+            
+            
         }
     }
     
@@ -299,8 +314,18 @@ class CreateEventVC: UIViewController {
             }
             guard let tracker = tracker else { return }
             delegate?.createTracker(tracker, categoryName: category?.name ?? "Без категории")
-        } else {
             
+        } else {
+            guard let editTracker = editTracker else { return }
+            
+            try? trackerStore.updateTracker(
+                newNameTracker: textField.text ?? "",
+                newEmoji: selectedEmoji,
+                newColor: selectedColor?.hexString ?? "",
+                newSchedule: schedule,
+                categoryName: category?.name ?? "Без категории",
+                editableTracker: editTracker
+            )
         }
         dismiss(animated: true)
     }

@@ -7,143 +7,79 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "601AD0A1-465C-4B3C-97A1-F1377C4AEBD3"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/Category/View/CategoryVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
-            landmarkName = "tableView(_:cellForRowAt:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "601AD0A1-465C-4B3C-97A1-F1377C4AEBD3 - 7d0a2b4667de403d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.CategoryVC.tableView(_: __C.UITableView, cellForRowAt: Foundation.IndexPath) -&gt; __C.UITableViewCell"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/CreateEventVC/Category/View/CategoryVC.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "171"
-                  endingLineNumber = "171"
-                  offsetFromSymbolStart = "3252">
-               </Location>
-               <Location
-                  uuid = "601AD0A1-465C-4B3C-97A1-F1377C4AEBD3 - 7d0a2b4667de403d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tracker.CategoryVC.tableView(_: __C.UITableView, cellForRowAt: Foundation.IndexPath) -&gt; __C.UITableViewCell"
-                  moduleName = "Tracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/CreateEventVC/Category/View/CategoryVC.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "171"
-                  endingLineNumber = "171"
-                  offsetFromSymbolStart = "180">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "767DF272-6380-40E9-BB84-6A6308E44B7F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/Category/View/CategoryVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "addCategoryButtonAction()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "32A243F1-A30C-4A62-8906-2369CA1902D8"
+            uuid = "5889D654-AA2D-4F2E-9DA7-72E6EE574F56"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Tracker/CoreData/TrackerCategoryStore.swift"
+            filePath = "Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
-            landmarkName = "controllerDidChangeContent(_:)"
+            startingLineNumber = "280"
+            endingLineNumber = "280"
+            landmarkName = "setupEditTracker()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "02AC906C-86F7-4267-9C9F-53A5DFFE384A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/CoreData/TrackerRecordStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18"
-            landmarkName = "addNewTrackerRecord(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "22FC5D8D-4683-4B29-A345-C27161C7B1E1"
+            uuid = "88E79742-2D27-42C6-A651-2648EDB2648B"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Tracker/UI/Trackers/TrackersVC/TrackersVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
-            landmarkName = "completedTracker(id:)"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
+            landmarkName = "makeContextMenu(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "22BFF179-E0AB-4B93-A77D-899F7A986AC8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "287"
+            endingLineNumber = "287"
+            landmarkName = "setupEditTracker()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "22FC5D8D-4683-4B29-A345-C27161C7B1E1 - d1400053b5609f59"
+                  uuid = "22BFF179-E0AB-4B93-A77D-899F7A986AC8 - fb34c489621c1dfb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackersVC.completedTracker(id: Foundation.UUID) -&gt; ()"
+                  symbolName = "Tracker.CreateEventVC.setupEditTracker() -&gt; ()"
                   moduleName = "Tracker"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/TrackersVC/TrackersVC.swift"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "357"
-                  endingLineNumber = "357"
-                  offsetFromSymbolStart = "1052">
+                  startingLineNumber = "282"
+                  endingLineNumber = "282"
+                  offsetFromSymbolStart = "1816">
                </Location>
                <Location
-                  uuid = "22FC5D8D-4683-4B29-A345-C27161C7B1E1 - d1400053b5609f59"
+                  uuid = "22BFF179-E0AB-4B93-A77D-899F7A986AC8 - fb34c489621c1dda"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Tracker.TrackersVC.completedTracker(id: Foundation.UUID) -&gt; ()"
+                  symbolName = "Tracker.CreateEventVC.setupEditTracker() -&gt; ()"
                   moduleName = "Tracker"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/TrackersVC/TrackersVC.swift"
+                  urlString = "file:///Users/viktorialobanova/Documents/YandexPracticum/TrackerApp/Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "357"
-                  endingLineNumber = "357"
-                  offsetFromSymbolStart = "872">
+                  startingLineNumber = "281"
+                  endingLineNumber = "281"
+                  offsetFromSymbolStart = "1152">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -151,96 +87,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B777A44B-0E40-4C8A-89D5-165BF3D5AA52"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/Schedule/ScheduleVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "tableView(_:cellForRowAt:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "53558507-C802-47A7-87C9-457982F03524"
-            shouldBeEnabled = "Yes"
+            uuid = "9D53DB0D-7B55-439B-84D6-D4E156A5D4C1"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
-            landmarkName = "updateCategoryButton()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8104F8F4-4574-4BDD-BC84-BA9F92547751"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/Category/MVVM/View/CategoryListView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "tableView(_:contextMenuConfigurationForRowAt:point:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "73E16306-1425-4135-8176-F7E043701882"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/CoreData/TrackerCategoryStore.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "controller(_:didChange:at:for:newIndexPath:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F29B0407-1755-4458-A16C-1FF97E461E99"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
-            landmarkName = "updateCategoryButton()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "99FBF2B0-6074-4F22-A82D-D1D4AE5428FC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tracker/UI/Trackers/CreateEventVC/CreateEventVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "446"
-            endingLineNumber = "446"
-            landmarkName = "updateCategoryButton()"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "viewDidAppear(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

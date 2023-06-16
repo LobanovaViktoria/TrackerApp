@@ -114,6 +114,7 @@ final class TrackersVC: UIViewController {
         setupLayoutSearchTextFieldAndButton()
         setupLayout()
         trackerCategoryStore.delegate = self
+        trackerStore.delegate = self
     }
     
     
@@ -460,6 +461,14 @@ extension TrackersVC: UITextFieldDelegate {
 extension TrackersVC: TrackerCategoryStoreDelegate {
     
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        updateCategories(with: trackerCategoryStore.trackerCategories)
+        collectionView.reloadData()
+    }
+}
+
+extension TrackersVC: TrackerStoreDelegate {
+    
+    func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
         updateCategories(with: trackerCategoryStore.trackerCategories)
         collectionView.reloadData()
     }

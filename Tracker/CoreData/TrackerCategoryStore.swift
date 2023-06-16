@@ -80,6 +80,12 @@ class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
+    func category(_ categoryName: String) -> TrackerCategoryCoreData? {
+         return fetchedResultsController.fetchedObjects?.first {
+            $0.nameCategory == categoryName
+        }
+    }
+    
     func deleteCategory(_ categoryToDelete: TrackerCategoryModel) throws {
         let category = fetchedResultsController.fetchedObjects?.first {
             $0.nameCategory == categoryToDelete.name
