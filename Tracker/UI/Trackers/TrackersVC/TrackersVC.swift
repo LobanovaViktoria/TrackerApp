@@ -92,7 +92,7 @@ final class TrackersVC: UIViewController {
         return button
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: UICollectionViewFlowLayout())
@@ -108,15 +108,16 @@ final class TrackersVC: UIViewController {
         view.backgroundColor = .white
         setDayOfWeek()
         updateCategories(with: trackerCategoryStore.trackerCategories)
-        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
+//        completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
+        completedTrackers = trackerRecordStore.trackerRecords
         makeNavBar()
         addSubviews()
         setupLayoutSearchTextFieldAndButton()
         setupLayout()
         trackerCategoryStore.delegate = self
         trackerStore.delegate = self
+        trackerRecordStore.delegate = self
     }
-    
     
     private func makeNavBar() {
         if let navBar = navigationController?.navigationBar {
@@ -277,6 +278,7 @@ final class TrackersVC: UIViewController {
         let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
             let editTrackerVC = CreateEventVC(.regular)
             editTrackerVC.editTracker = tracker
+            editTrackerVC.editTrackerDate = self?.datePicker.date ?? Date()
             editTrackerVC.category = self?.visibleCategories[indexPath.section]
             self?.present(editTrackerVC, animated: true)
         }
@@ -472,6 +474,15 @@ extension TrackersVC: TrackerStoreDelegate {
         updateCategories(with: trackerCategoryStore.trackerCategories)
         collectionView.reloadData()
     }
+}
+
+extension TrackersVC: TrackerRecordStoreDelegate {
+    func store(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
+        completedTrackers = trackerRecordStore.trackerRecords
+        collectionView.reloadData()
+    }
+    
+    
 }
 
 extension TrackersVC: UICollectionViewDelegate {

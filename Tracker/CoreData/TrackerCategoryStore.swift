@@ -25,7 +25,7 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
 
 class TrackerCategoryStore: NSObject {
     
-    private let trackerStore = TrackerStore()
+   // private let trackerStore = TrackerStore()
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
     weak var delegate: TrackerCategoryStoreDelegate?
@@ -40,8 +40,7 @@ class TrackerCategoryStore: NSObject {
     }
     
     var trackerCategories: [TrackerCategoryModel] {
-        guard
-            let objects = self.fetchedResultsController.fetchedObjects,
+        guard let objects = self.fetchedResultsController.fetchedObjects,
             let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
         else { return [] }
         return trackerCategories

@@ -139,46 +139,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         checkButton.isEnabled = isEnabled
         resultLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: "Число дней"), completedCount)
     }
-    
-//    func configure(
-//        _ id: UUID,
-//        name: String,
-//        color: UIColor,
-//        emoji: String,
-//        isCompleted: Bool,
-//        isEnabled: Bool,
-//        completedCount: Int
-//    ) {
-//        let mod10 = completedCount % 10
-//        let mod100 = completedCount % 100
-//        let not10To20 = mod100 < 10 || mod100 > 20
-//        var str = "\(completedCount) "
-//        trackerId = id
-//        trackerNameLabel.text = name
-//        trackerView.backgroundColor = color
-//        checkButton.backgroundColor = color
-//        emojiLabel.text = emoji
-//        isCompletedToday = isCompleted
-//        checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
-//        if isCompletedToday == true {
-//            checkButton.alpha = 0.5
-//        } else {
-//            checkButton.alpha = 1
-//        }
-//
-//        checkButton.isEnabled = isEnabled
-//
-//        if completedCount == 0 {
-//            str += "дней"
-//        } else if mod10 == 1 && not10To20 {
-//            str += "день"
-//        } else if (mod10 == 2 || mod10 == 3 || mod10 == 4) && not10To20 {
-//            str += "дня"
-//        } else {
-//            str += "дней"
-//        }
-//        resultLabel.text = str
-//    }
 }
 
 extension UIImage {
@@ -188,3 +148,4 @@ extension UIImage {
         }
     }
 }
+

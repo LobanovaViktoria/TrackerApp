@@ -23,7 +23,6 @@ protocol TrackerStoreDelegate: AnyObject {
     )
 }
 
-
 class TrackerStore: NSObject {
     
     private let context: NSManagedObjectContext
@@ -36,7 +35,7 @@ class TrackerStore: NSObject {
     
     convenience override init() {
         let context = DatabaseManager.shared.context
-       try! self.init(context: context)
+        try! self.init(context: context)
     }
     
     var trackers: [Tracker] {
@@ -69,7 +68,7 @@ class TrackerStore: NSObject {
         updateExistingTracker(trackerCoreData, with: tracker)
         try context.save()
     }
-  
+    
     func updateTracker(
         newNameTracker: String,
         newEmoji: String,
@@ -126,7 +125,7 @@ class TrackerStore: NSObject {
         }
         guard let schedule = data.schedule else {
             throw DatabaseError.someError
-        }        
+        }
         guard let color = data.color else {
             throw DatabaseError.someError
         }
