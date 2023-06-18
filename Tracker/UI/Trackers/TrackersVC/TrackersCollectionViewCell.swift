@@ -9,15 +9,26 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     static let identifier = "trackersCollectionViewCell"
     
     public weak var delegate: TrackersCollectionViewCellDelegate?
+    public var menuView: UIView {
+        return trackerView
+    }
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
     private let limitNumberOfCharacters = 38
-    
+   
     private lazy var trackerView: UIView = {
         let trackerView = UIView()
         trackerView.layer.cornerRadius = 16
         trackerView.translatesAutoresizingMaskIntoConstraints = false
         return trackerView
+    }()
+    
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "pinSquare")
+        image.isHidden = false
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
     }()
     
     private lazy var emojiView: UIView = {
@@ -66,6 +77,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         contentView.addSubview(trackerView)
+        trackerView.addSubview(pinImageView)
         trackerView.addSubview(emojiView)
         emojiView.addSubview(emojiLabel)
         trackerView.addSubview(trackerNameLabel)
@@ -78,6 +90,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             trackerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trackerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -58),
             trackerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 8),
+            pinImageView.topAnchor.constraint(equalTo: trackerView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: trackerView.trailingAnchor, constant: -12),
             
             emojiView.heightAnchor.constraint(equalToConstant: 24),
             emojiView.widthAnchor.constraint(equalToConstant: 24),
@@ -121,13 +138,15 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emoji: String,
         isCompleted: Bool,
         isEnabled: Bool,
-        completedCount: Int
+        completedCount: Int,
+        pinned: Bool
     ) {
         trackerId = id
         trackerNameLabel.text = name
         trackerView.backgroundColor = color
         checkButton.backgroundColor = color
         emojiLabel.text = emoji
+        pinImageView.isHidden = !pinned
         isCompletedToday = isCompleted
         checkButton.setImage(isCompletedToday ? UIImage(systemName: "checkmark")! : UIImage(systemName: "plus")!, for: .normal)
         if isCompletedToday == true {
@@ -135,9 +154,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         } else {
             checkButton.alpha = 1
         }
-        
         checkButton.isEnabled = isEnabled
         resultLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: "Число дней"), completedCount)
+       
     }
 }
 

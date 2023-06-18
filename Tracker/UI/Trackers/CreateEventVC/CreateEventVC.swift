@@ -384,10 +384,10 @@ class CreateEventVC: UIViewController {
         var tracker: Tracker?
         if editTracker == nil {
             if event == .regular {
-                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule, pinned: false)
             } else {
                 schedule = WeekDay.allCases
-                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule)
+                tracker = Tracker(id: UUID(), name: textField.text ?? "", color: selectedColor, emoji: selectedEmoji, schedule: schedule, pinned: false)
             }
             guard let tracker = tracker else { return }
             delegate?.createTracker(tracker, categoryName: category?.name ?? "Без категории")

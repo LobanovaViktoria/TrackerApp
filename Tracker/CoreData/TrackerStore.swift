@@ -69,6 +69,14 @@ class TrackerStore: NSObject {
         try context.save()
     }
     
+    func togglePinTracker(_ tracker: Tracker) throws {
+        let tracker = fetchedResultsController.fetchedObjects?.first {
+            $0.id == tracker.id
+        }
+        tracker?.pinned = !(tracker?.pinned ?? false)
+        try context.save()
+    }
+    
     func updateTracker(
         newNameTracker: String,
         newEmoji: String,
@@ -129,12 +137,15 @@ class TrackerStore: NSObject {
         guard let color = data.color else {
             throw DatabaseError.someError
         }
+        let pinned = data.pinned
+        
         return Tracker(
             id: uuid,
             name: name,
             color: color.color,
             emoji: emoji,
-            schedule: schedule.compactMap { WeekDay(rawValue: $0) }
+            schedule: schedule.compactMap { WeekDay(rawValue: $0) },
+            pinned: pinned
         )
     }
 }

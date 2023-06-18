@@ -135,13 +135,16 @@ class TrackerCategoryStore: NSObject {
             guard let id = trackerCoreData.id,
                   let nameTracker = trackerCoreData.nameTracker,
                   let color = trackerCoreData.color?.color,
-                  let emoji = trackerCoreData.emoji else { return nil }
+                  let emoji = trackerCoreData.emoji
+            else { return nil }
+            let pinned = trackerCoreData.pinned
             return Tracker(
                 id: id,
                 name: nameTracker,
                 color: color,
                 emoji: emoji,
-                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }
+                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) },
+                pinned: pinned
             )
         } ?? []
         return TrackerCategoryModel(
