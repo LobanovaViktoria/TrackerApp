@@ -56,5 +56,3 @@ final class WeekDayTableViewCell: UITableViewCell {
         delegate?.stateChanged(for: weekDay, isOn: control.isOn)
     }
 }
-    
-   

@@ -12,10 +12,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     public var menuView: UIView {
         return trackerView
     }
+    private let limitNumberOfCharacters = 38
     private var isCompletedToday: Bool = false
     private var trackerId: UUID? = nil
-    private let limitNumberOfCharacters = 38
-   
+    
     private lazy var trackerView: UIView = {
         let trackerView = UIView()
         trackerView.layer.cornerRadius = 16
@@ -85,7 +85,6 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(checkButton)
         
         NSLayoutConstraint.activate([
-            
             trackerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             trackerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trackerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -58),
@@ -156,15 +155,5 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
         checkButton.isEnabled = isEnabled
         resultLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: "Число дней"), completedCount)
-       
     }
 }
-
-extension UIImage {
-    func withAlpha(_ a: CGFloat) -> UIImage {
-        return UIGraphicsImageRenderer(size: size, format: imageRendererFormat).image { (_) in
-            draw(in: CGRect(origin: .zero, size: size), blendMode: .normal, alpha: a)
-        }
-    }
-}
-

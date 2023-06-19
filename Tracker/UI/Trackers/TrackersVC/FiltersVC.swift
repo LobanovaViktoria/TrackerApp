@@ -1,8 +1,14 @@
 import UIKit
 
+protocol FiltersVCDelegate: AnyObject {
+    func filterSelected(filter: Filter)
+}
+
 class FiltersVC: UIViewController {
+    weak var delegate: FiltersVCDelegate?
     
-    private let filters = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Незавершенные"]
+    private let filters: [Filter] = Filter.allCases
+    var selectedFilter: Filter?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -24,6 +30,7 @@ class FiltersVC: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -68,8 +75,9 @@ extension FiltersVC: UITableViewDataSource {
         guard let filterCell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier) as? CategoryTableViewCell else {
             return UITableViewCell()
         }
-        
-        filterCell.label.text = filters[indexPath.row]
+        let filter = filters[indexPath.row]
+        filterCell.checkmarkImage.isHidden = filter != selectedFilter
+        filterCell.label.text = filters[indexPath.row].rawValue
         if indexPath.row == filters.count - 1 {
             filterCell.separatorInset = UIEdgeInsets(top: 0, left: filterCell.bounds.size.width + 200, bottom: 0, right: 0);
             filterCell.contentView.clipsToBounds = true
@@ -98,17 +106,9 @@ extension FiltersVC: UITableViewDelegate {
         guard let filterCell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else {
             return
         }
-        guard let selectedFilterName = filterCell.label.text else { return }
-        filterCell.checkmarkImage.isHidden = !filterCell.checkmarkImage.isHidden
-        //viewModel.selectCategory(with: selectedCategoryName)
+        let filter = filters[indexPath.row]
+        delegate?.filterSelected(filter: filter)
         dismiss(animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let filterCell = tableView.cellForRow(at: indexPath) as? CategoryTableViewCell else {
-            return
-        }
-        filterCell.checkmarkImage.isHidden = true
     }
 }
 

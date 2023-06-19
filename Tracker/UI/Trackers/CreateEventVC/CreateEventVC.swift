@@ -25,10 +25,11 @@ enum Event {
 
 protocol CreateEventVCDelegate: AnyObject {
     func createTracker(_ tracker: Tracker, categoryName: String)
-    func updateTracker(_ tracker: Tracker, categoryName: String)
 }
 
 class CreateEventVC: UIViewController {
+    public weak var delegate: CreateEventVCDelegate?
+    
     private let emojies = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍒",
         "🍔", "🥦", "🏓", "🥇", "🎸", "🏝"
@@ -36,7 +37,7 @@ class CreateEventVC: UIViewController {
     
     private let colors: [UIColor] = [.color1, .color2, .color3, .color4, .color5, .color6, .color7, .color8, .color9, .color10, .color11, .color12, .color13, .color14, .color15, .color16, .color17, .color18]
     
-    private var collectionViewHeader = ["Emoji", "Цвет"]
+    private let collectionViewHeader = ["Emoji", "Цвет"]
     private let event: Event
     private let nameCell = ["Категория", "Расписание"]
     private let limitNumberOfCharacters = 38
@@ -75,8 +76,6 @@ class CreateEventVC: UIViewController {
     
     var selectedCategory: TrackerCategoryModel?
     var categorySubTitle: String = ""
-    
-    public weak var delegate: CreateEventVCDelegate?
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -347,13 +346,11 @@ class CreateEventVC: UIViewController {
     private func updatePlusMinusButtons() {
         if let editTracker = editTracker,
            let editTrackerDate = editTrackerDate {
-            //completedTrackers = try! self.trackerRecordStore.fetchTrackerRecord()
             completedTrackers = trackerRecordStore.trackerRecords
             let completedCount = completedTrackers.filter({ record in
                 record.idTracker == editTracker.id
             }).count
             completedDaysLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfDay", comment: "дней"), completedCount)
-            
             if completedTrackers.firstIndex(where: { record in
                 record.idTracker == editTracker.id &&
                 record.date.yearMonthDayComponents == editTrackerDate.yearMonthDayComponents
@@ -469,7 +466,7 @@ class CreateEventVC: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: buttonBackgroundView.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
+            
             completedDaysBackgroundView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
             completedDaysBackgroundView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             completedDaysBackgroundView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
@@ -492,41 +489,41 @@ class CreateEventVC: UIViewController {
             textField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
-
+            
             errorLabel.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 0),
             errorLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             heightAnchor!,
-
+            
             createEventView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 16),
             createEventView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             createEventView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             createEventView.heightAnchor.constraint(equalToConstant: createEventViewHeight),
-
+            
             categoryButton.topAnchor.constraint(equalTo: createEventView.topAnchor),
             categoryButton.bottomAnchor.constraint(equalTo:  self.event == .regular ? separatorView.topAnchor : createEventView.bottomAnchor),
             categoryButton.trailingAnchor.constraint(equalTo: createEventView.trailingAnchor),
             categoryButton.leadingAnchor.constraint(equalTo: createEventView.leadingAnchor),
-
+            
             forwardImage1.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -24),
             forwardImage1.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
-
+            
             emojiAndColorCollectionView.topAnchor.constraint(equalTo: createEventView.bottomAnchor, constant: 22),
             emojiAndColorCollectionView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             emojiAndColorCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             emojiAndColorCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             emojiAndColorCollectionView.widthAnchor.constraint(equalToConstant: scrollView.bounds.width - 32),
             emojiAndColorCollectionView.heightAnchor.constraint(equalToConstant: 450),
-
+            
             buttonBackgroundView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             buttonBackgroundView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             buttonBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             buttonBackgroundView.heightAnchor.constraint(equalToConstant: 80),
-
+            
             cancelButton.leadingAnchor.constraint(equalTo: buttonBackgroundView.leadingAnchor, constant: 20),
             cancelButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             cancelButton.widthAnchor.constraint(equalToConstant: 161),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
-
+            
             createEventButton.trailingAnchor.constraint(equalTo: buttonBackgroundView.trailingAnchor, constant: -20),
             createEventButton.bottomAnchor.constraint(equalTo: buttonBackgroundView.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             createEventButton.widthAnchor.constraint(equalToConstant: 161),
@@ -608,7 +605,7 @@ class CreateEventVC: UIViewController {
     
     @objc func plusButtonAction() {
         if let editTracker = editTracker,
-        let editTrackerDate = editTrackerDate {
+           let editTrackerDate = editTrackerDate {
             let record = TrackerRecord(idTracker: editTracker.id, date: editTrackerDate)
             completedTrackers.append(record)
             try? trackerRecordStore.addNewTrackerRecord(record)
@@ -624,18 +621,10 @@ class CreateEventVC: UIViewController {
                 record.date.yearMonthDayComponents == editTrackerDate.yearMonthDayComponents
             }) {
                 completedTrackers.remove(at: index)
-                try? trackerRecordStore.deleteTrackerRecord(with: editTracker.id)
+                try? trackerRecordStore.deleteTrackerRecord(with: editTracker.id, date: editTrackerDate)
             }
         }
         updatePlusMinusButtons()
-    }
-}
-
-extension UITextField {
-    
-    func indent(size:CGFloat) {
-        self.leftView = UIView(frame: CGRect(x: self.frame.minX, y: self.frame.minY, width: size, height: self.frame.height))
-        self.leftViewMode = .always
     }
 }
 
@@ -808,9 +797,8 @@ extension CreateEventVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension CreateEventVC: TrackerRecordStoreDelegate {
-
+extension CreateEventVC: TrackerRecordStoreDelegate {    
     func store(_ store: TrackerRecordStore, didUpdate update: TrackerRecordStoreUpdate) {
         completedTrackers = trackerRecordStore.trackerRecords
-}
+    }
 }

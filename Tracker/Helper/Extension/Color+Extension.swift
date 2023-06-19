@@ -3,6 +3,9 @@ import UIKit
 extension UIColor {
     
     static var backgroundColor: UIColor { UIColor(named: "backgroundColor") ?? UIColor.red }
+    static var gradientColor1: UIColor { UIColor(named: "gradientColor1") ?? UIColor.red }
+    static var gradientColor2: UIColor { UIColor(named: "gradientColor2") ?? UIColor.green }
+    static var gradientColor3: UIColor { UIColor(named: "gradientColor3") ?? UIColor.blue }
     static var findColor: UIColor { UIColor(named: "findColor") ?? UIColor.gray }
     static var ypGray: UIColor { UIColor(named: "ypGray") ?? UIColor.gray }
     static var ypRed: UIColor { UIColor(named: "ypRed") ?? UIColor.red }

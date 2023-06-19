@@ -16,6 +16,7 @@ final class TrackersVC: UIViewController {
     private var currentDate: Int?
     private var searchText: String = ""
     private var widthAnchor: NSLayoutConstraint?
+    private var selectedFilter: Filter?
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -120,14 +121,18 @@ final class TrackersVC: UIViewController {
     private func makeNavBar() {
         if let navBar = navigationController?.navigationBar {
             title = titleTrackers
-            let leftButton =
-            UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTracker))
+            let leftButton = UIBarButtonItem(
+                barButtonSystemItem: .add,
+                target: self,
+                action: #selector(addTracker)
+            )
             leftButton.tintColor = .black
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
             datePicker.preferredDatePickerStyle = .compact
             datePicker.datePickerMode = .date
             datePicker.locale = Locale(identifier: "ru_RU")
             datePicker.accessibilityLabel = dateFormatter.string(from: datePicker.date)
+            
             let rightButton = UIBarButtonItem(customView: datePicker)
             datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
             rightButton.accessibilityLabel = dateFormatter.string(from: datePicker.date)
@@ -159,6 +164,8 @@ final class TrackersVC: UIViewController {
     
     @objc private func filtersButtonAction() {
         let filtersVC = FiltersVC()
+        filtersVC.delegate = self
+        filtersVC.selectedFilter = selectedFilter
         present(filtersVC, animated: true)
     }
     
@@ -231,12 +238,29 @@ final class TrackersVC: UIViewController {
     private func updateCategories(with categories: [TrackerCategoryModel]) {
         var newCategories: [TrackerCategoryModel] = []
         var pinnedTrackers: [Tracker] = []
+        activityIndicator.startAnimating()
         for category in categories {
             var newTrackers: [Tracker] = []
             for tracker in category.visibleTrackers(filterString: searchText, pin: nil) {
                 guard let schedule = tracker.schedule else { return }
                 let scheduleInts = schedule.map { $0.numberOfDay }
                 if let day = currentDate, scheduleInts.contains(day) {
+                    if selectedFilter == .completed {
+                        if !completedTrackers.contains(where: { record in
+                            record.idTracker == tracker.id &&
+                            record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+                        }) {
+                            continue
+                        }
+                    }
+                    if selectedFilter == .uncompleted {
+                        if completedTrackers.contains(where: { record in
+                            record.idTracker == tracker.id &&
+                            record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
+                        }) {
+                            continue
+                        }
+                    }
                     if tracker.pinned == true {
                         pinnedTrackers.append(tracker)
                     } else {
@@ -253,6 +277,7 @@ final class TrackersVC: UIViewController {
         
         self.pinnedTrackers = pinnedTrackers
         collectionView.reloadData()
+        activityIndicator.stopAnimating()
     }
     
     func deleteTracker(_ tracker: Tracker) {
@@ -269,9 +294,7 @@ final class TrackersVC: UIViewController {
         })
         alert.addAction(UIAlertAction(title: "Отменить",
                                       style: .cancel) { _ in
-            
         })
-        
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -290,7 +313,7 @@ final class TrackersVC: UIViewController {
             let editTrackerVC = CreateEventVC(.regular)
             editTrackerVC.editTracker = tracker
             editTrackerVC.editTrackerDate = self?.datePicker.date ?? Date()
-            editTrackerVC.category = self?.visibleCategories[indexPath.section]
+            editTrackerVC.category = tracker.category
             self?.present(editTrackerVC, animated: true)
         }
         let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
@@ -305,6 +328,7 @@ extension TrackersVC: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         let count = visibleCategories.count
         collectionView.isHidden = count == 0 && pinnedTrackers.count == 0
+        filtersButton.isHidden = collectionView.isHidden && selectedFilter == nil
         return count + 1
     }
     
@@ -323,7 +347,6 @@ extension TrackersVC: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        activityIndicator.startAnimating()
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.identifier, for: indexPath) as? TrackersCollectionViewCell else { return UICollectionViewCell() }
         cell.delegate = self
         let tracker: Tracker
@@ -351,7 +374,6 @@ extension TrackersVC: UICollectionViewDataSource {
             completedCount: completedCount,
             pinned: tracker.pinned ?? false
         )
-        activityIndicator.stopAnimating()
         return cell
     }
 }
@@ -443,12 +465,6 @@ extension TrackersVC: RegularOrIrregularEventVCDelegate {
         }
         dismiss(animated: true)
     }
-    
-    func updateTracker(
-        _ tracker: Tracker, categoryName: String
-    ){
-        
-    }
 }
 
 extension TrackersVC {
@@ -470,12 +486,12 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
             record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
         }) {
             completedTrackers.remove(at: index)
-            try? trackerRecordStore.deleteTrackerRecord(with: id)
+            try? trackerRecordStore.deleteTrackerRecord(with: id, date: datePicker.date)
         } else {
             completedTrackers.append(TrackerRecord(idTracker: id, date: datePicker.date))
             try? trackerRecordStore.addNewTrackerRecord(TrackerRecord(idTracker: id, date: datePicker.date))
         }
-        collectionView.reloadData()
+        updateCategories(with: trackerCategoryStore.trackerCategories)
     }
 }
 
@@ -539,5 +555,24 @@ extension TrackersVC: UICollectionViewDelegate {
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return nil }
         
         return UITargetedPreview(view: cell.menuView)
+    }
+}
+
+extension TrackersVC: FiltersVCDelegate {
+    func filterSelected(filter: Filter) {
+        selectedFilter = filter
+        searchText = ""
+        switch filter {
+        case .all:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        case .today:
+            datePicker.date = Date()
+            dateChanged(datePicker)
+            updateCategories(with: trackerCategoryStore.trackerCategories)            
+        case .completed:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        case .uncompleted:
+            updateCategories(with: trackerCategoryStore.trackerCategories)
+        }
     }
 }

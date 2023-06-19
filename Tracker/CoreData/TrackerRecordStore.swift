@@ -24,12 +24,10 @@ protocol TrackerRecordStoreDelegate: AnyObject {
 }
 
 class TrackerRecordStore: NSObject {
+    weak var delegate: TrackerRecordStoreDelegate?
     
-    //private let trackerRecordStore = TrackerRecordStore()
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
-   
-    weak var delegate: TrackerRecordStoreDelegate?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -37,7 +35,7 @@ class TrackerRecordStore: NSObject {
     
     convenience override init() {
         let context = DatabaseManager.shared.context
-       try! self.init(context: context)
+        try! self.init(context: context)
     }
     
     var trackerRecords: [TrackerRecord] {
@@ -71,35 +69,21 @@ class TrackerRecordStore: NSObject {
         try context.save()
     }
     
-    func deleteTrackerRecord(with id: UUID) throws {
+    func deleteTrackerRecord(with id: UUID, date: Date) throws {
         let trackerRecord = fetchedResultsController.fetchedObjects?.first {
-            $0.idTracker == id
+            $0.idTracker == id &&
+            $0.date?.yearMonthDayComponents == date.yearMonthDayComponents
         }
         if let trackerRecord = trackerRecord {
             context.delete(trackerRecord)
             try context.save()
         }
-//        let fetchRequest = TrackerRecordCoreData.fetchRequest()
-//        let trackerRecordFromCoreData = try context.fetch(fetchRequest)
-//        let record = trackerRecordFromCoreData.first {
-//            $0.idTracker == id
-//        }
-//        if let record = record {
-//            context.delete(record)
-//            try context.save()
-//        }
     }
     
     func updateExistingTrackerRecord(_ trackerRecordCoreData: TrackerRecordCoreData, with record: TrackerRecord) {
         trackerRecordCoreData.idTracker = record.idTracker
         trackerRecordCoreData.date = record.date
     }
-    
-//    func fetchTrackerRecord() throws -> [TrackerRecord] {
-//        let fetchRequest = TrackerRecordCoreData.fetchRequest()
-//        let trackerRecordFromCoreData = try context.fetch(fetchRequest)
-//        return try trackerRecordFromCoreData.map { try self.trackerRecord(from: $0) }
-//    }
     
     func trackerRecord(from data: TrackerRecordCoreData) throws -> TrackerRecord {
         guard let id = data.idTracker else {
@@ -116,33 +100,30 @@ class TrackerRecordStore: NSObject {
 }
 
 extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
-    
     func controllerWillChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
-        updatedIndexes = IndexSet()
-        movedIndexes = Set<TrackerRecordStoreUpdate.Move>()
-    }
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            insertedIndexes = IndexSet()
+            deletedIndexes = IndexSet()
+            updatedIndexes = IndexSet()
+            movedIndexes = Set<TrackerRecordStoreUpdate.Move>()
+        }
     
     func controllerDidChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        delegate?.store(
-            self,
-            didUpdate: TrackerRecordStoreUpdate(
-                insertedIndexes: insertedIndexes!,
-                deletedIndexes: deletedIndexes!,
-                updatedIndexes: updatedIndexes!,
-                movedIndexes: movedIndexes!
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            delegate?.store(
+                self,
+                didUpdate: TrackerRecordStoreUpdate(
+                    insertedIndexes: insertedIndexes!,
+                    deletedIndexes: deletedIndexes!,
+                    updatedIndexes: updatedIndexes!,
+                    movedIndexes: movedIndexes!
+                )
             )
-        )
-        insertedIndexes = nil
-        deletedIndexes = nil
-        updatedIndexes = nil
-        movedIndexes = nil
-    }
+            insertedIndexes = nil
+            deletedIndexes = nil
+            updatedIndexes = nil
+            movedIndexes = nil
+        }
     
     func controller(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
