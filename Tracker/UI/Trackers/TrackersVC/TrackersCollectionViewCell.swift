@@ -66,8 +66,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let image = UIImage(named: "plus")
         checkButton.setImage(image, for: .normal)
         checkButton.addTarget(self, action: #selector(didTapCheckButton), for: .touchUpInside)
-        checkButton.backgroundColor = .white
-        checkButton.tintColor = .white
+        checkButton.backgroundColor = .ypWhite
+        checkButton.tintColor = .ypWhite
         checkButton.layer.cornerRadius = 17
         checkButton.translatesAutoresizingMaskIntoConstraints = false
         return checkButton

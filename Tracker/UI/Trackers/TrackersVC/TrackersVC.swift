@@ -4,6 +4,7 @@ final class TrackersVC: UIViewController {
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
+    private let colors = Colors()
     private let titleTrackers = NSLocalizedString("trackersTitle", tableName: "LocalizableString", comment: "Title Trackers")
     private let filtersButtonTitle = NSLocalizedString("filters", tableName: "LocalizableString", comment: "Title Trackers")
    
@@ -26,7 +27,7 @@ final class TrackersVC: UIViewController {
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = .gray
+        activityIndicator.color = .ypBlack
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         return activityIndicator
     }()
@@ -47,14 +48,20 @@ final class TrackersVC: UIViewController {
         return label
     }()
     
-    private lazy var datePicker = UIDatePicker()
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.backgroundColor = .datePickerColor
+        datePicker.layer.cornerRadius = 8
+        datePicker.layer.masksToBounds = true
+        return datePicker
+    }()
     
     private lazy var searchTextField: UITextField = {
         let searchTextField = UITextField()
         searchTextField.placeholder = "Поиск"
         searchTextField.textColor = .ypBlack
         searchTextField.font = .systemFont(ofSize: 17)
-        searchTextField.backgroundColor = .findColor
+        searchTextField.backgroundColor = .searchTextFieldColor
         searchTextField.layer.cornerRadius = 10
         searchTextField.indent(size: 30)
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -105,7 +112,7 @@ final class TrackersVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         setDayOfWeek()
         updateCategories(with: trackerCategoryStore.trackerCategories)
         completedTrackers = trackerRecordStore.trackerRecords
@@ -126,7 +133,8 @@ final class TrackersVC: UIViewController {
                 target: self,
                 action: #selector(addTracker)
             )
-            leftButton.tintColor = .black
+            leftButton.tintColor = .ypBlack
+            
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
             datePicker.preferredDatePickerStyle = .compact
             datePicker.datePickerMode = .date
@@ -575,4 +583,17 @@ extension TrackersVC: FiltersVCDelegate {
             updateCategories(with: trackerCategoryStore.trackerCategories)
         }
     }
+}
+
+extension UIDatePicker {
+
+    var textColor: UIColor? {
+        set {
+            setValue(newValue, forKeyPath: "textColor")
+        }
+        get {
+            return value(forKeyPath: "textColor") as? UIColor
+        }
+    }
+
 }
