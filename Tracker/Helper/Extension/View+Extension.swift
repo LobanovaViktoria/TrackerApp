@@ -4,6 +4,16 @@ public extension UIView {
     
     private static let kLayerNameGradientBorder = "GradientBorderLayer"
     
+    func addBackground(image: String) {
+        let width = UIScreen.main.bounds.size.width
+        let height = UIScreen.main.bounds.size.height
+        let imageViewBackground = UIImageView(frame: CGRectMake(0, 0, width, height))
+        imageViewBackground.image = UIImage(named: image)
+        imageViewBackground.contentMode = UIView.ContentMode.scaleAspectFill
+        self.addSubview(imageViewBackground)
+        self.sendSubviewToBack(imageViewBackground)
+    }
+    
     func setGradientBorder(
         width: CGFloat,
         colors: [UIColor],

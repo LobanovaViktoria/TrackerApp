@@ -188,6 +188,9 @@ extension CategoryListView: UITableViewDataSource {
             categoryCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
             categoryCell.contentView.layer.cornerRadius = 0
         }
+        if viewModel.categories.count == 1 {
+            categoryCell.contentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        }
         categoryCell.checkmarkImage.isHidden = viewModel.selectedCategory?.name != categoryName
         categoryCell.selectionStyle = .none
         return categoryCell

@@ -1,6 +1,7 @@
 import UIKit
 
 final class TrackersVC: UIViewController {
+    private let analyticsService = AnalyticsService()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
@@ -112,6 +113,8 @@ final class TrackersVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        analyticsService.report(event: .open, params: ["Screen" : "Main"])
+        print("Event: open")
         view.backgroundColor = colors.viewBackgroundColor
         setDayOfWeek()
         updateCategories(with: trackerCategoryStore.trackerCategories)
@@ -125,6 +128,11 @@ final class TrackersVC: UIViewController {
         trackerRecordStore.delegate = self
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report(event: .close, params: ["Screen" : "Main"])
+        print("Event: close")
+    }
     private func makeNavBar() {
         if let navBar = navigationController?.navigationBar {
             title = titleTrackers
@@ -161,6 +169,8 @@ final class TrackersVC: UIViewController {
         let trackersVC = RegularOrIrregularEventVC()
         trackersVC.delegate = self
         present(trackersVC, animated: true)
+        analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.add_track.rawValue])
+        print("Event: add_track")
     }
     
     @objc private func cancelEditingButtonAction() {
@@ -171,6 +181,8 @@ final class TrackersVC: UIViewController {
     }
     
     @objc private func filtersButtonAction() {
+        analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.filter.rawValue])
+        print("Event: filter")
         let filtersVC = FiltersVC()
         filtersVC.delegate = self
         filtersVC.selectedFilter = selectedFilter
@@ -318,6 +330,8 @@ final class TrackersVC: UIViewController {
             try? self?.trackerStore.togglePinTracker(tracker)
         }
         let rename = UIAction(title: "Редактировать", image: nil) { [weak self] action in
+            self?.analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.edit.rawValue])
+            print("Event: edit")
             let editTrackerVC = CreateEventVC(.regular)
             editTrackerVC.editTracker = tracker
             editTrackerVC.editTrackerDate = self?.datePicker.date ?? Date()
@@ -326,6 +340,8 @@ final class TrackersVC: UIViewController {
         }
         let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] action in
             self?.actionSheet(trackerToDelete: tracker)
+            self?.analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.delete.rawValue])
+            print("Event: delete")
         }
         return UIMenu(children: [pin, rename, delete])
     }
@@ -498,6 +514,8 @@ extension TrackersVC: TrackersCollectionViewCellDelegate {
         } else {
             completedTrackers.append(TrackerRecord(idTracker: id, date: datePicker.date))
             try? trackerRecordStore.addNewTrackerRecord(TrackerRecord(idTracker: id, date: datePicker.date))
+            analyticsService.report(event: .click, params: ["Screen" : "Main", "Item" : Items.track.rawValue])
+            print("Event: track")
         }
         updateCategories(with: trackerCategoryStore.trackerCategories)
     }
