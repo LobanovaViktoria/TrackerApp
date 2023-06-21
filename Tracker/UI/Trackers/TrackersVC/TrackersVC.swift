@@ -54,6 +54,8 @@ final class TrackersVC: UIViewController {
         datePicker.layer.cornerRadius = 8
         datePicker.layer.masksToBounds = true
         return datePicker
+        
+        
     }()
     
     private lazy var searchTextField: UITextField = {
