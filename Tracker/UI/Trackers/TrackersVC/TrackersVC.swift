@@ -8,7 +8,7 @@ final class TrackersVC: UIViewController {
     private let colors = Colors()
     private let titleTrackers = NSLocalizedString("trackersTitle", tableName: "LocalizableString", comment: "Title Trackers")
     private let filtersButtonTitle = NSLocalizedString("filters", tableName: "LocalizableString", comment: "Title Trackers")
-   
+    
     //трекеры, которые были «выполнены» в выбранную дату
     private var completedTrackers: [TrackerRecord] = []
     
@@ -126,6 +126,9 @@ final class TrackersVC: UIViewController {
         trackerCategoryStore.delegate = self
         trackerStore.delegate = self
         trackerRecordStore.delegate = self
+        if #available(iOS 13.0, *) {
+            datePicker.overrideUserInterfaceStyle = .light
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -379,7 +382,7 @@ extension TrackersVC: UICollectionViewDataSource {
         } else {
             tracker = visibleCategories[indexPath.section - 1].visibleTrackers(filterString: searchText, pin: false)[indexPath.row]
         }
-         
+        
         let isCompleted = completedTrackers.contains(where: { record in
             record.idTracker == tracker.id &&
             record.date.yearMonthDayComponents == datePicker.date.yearMonthDayComponents
@@ -557,16 +560,16 @@ extension TrackersVC: TrackerRecordStoreDelegate {
 
 extension TrackersVC: UICollectionViewDelegate {
     func collectionView(
-         _ collectionView: UICollectionView,
-         contextMenuConfigurationForItemAt indexPath: IndexPath,
-         point: CGPoint
-     ) -> UIContextMenuConfiguration? {
-         let identifier = "\(indexPath.row):\(indexPath.section)" as NSString
-         return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) {
-             suggestedActions in
-              return self.makeContextMenu(indexPath)
-         }
-     }
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let identifier = "\(indexPath.row):\(indexPath.section)" as NSString
+        return UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) {
+            suggestedActions in
+            return self.makeContextMenu(indexPath)
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         guard let identifier = configuration.identifier as? String else { return nil }
@@ -577,7 +580,7 @@ extension TrackersVC: UICollectionViewDelegate {
               let row = Int(rowString),
               let section = Int(sectionString) else { return nil }
         let indexPath = IndexPath(row: row, section: section)
-                
+        
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else { return nil }
         
         return UITargetedPreview(view: cell.menuView)
@@ -594,24 +597,11 @@ extension TrackersVC: FiltersVCDelegate {
         case .today:
             datePicker.date = Date()
             dateChanged(datePicker)
-            updateCategories(with: trackerCategoryStore.trackerCategories)            
+            updateCategories(with: trackerCategoryStore.trackerCategories)
         case .completed:
             updateCategories(with: trackerCategoryStore.trackerCategories)
         case .uncompleted:
             updateCategories(with: trackerCategoryStore.trackerCategories)
         }
     }
-}
-
-extension UIDatePicker {
-
-    var textColor: UIColor? {
-        set {
-            setValue(newValue, forKeyPath: "textColor")
-        }
-        get {
-            return value(forKeyPath: "textColor") as? UIColor
-        }
-    }
-
 }
