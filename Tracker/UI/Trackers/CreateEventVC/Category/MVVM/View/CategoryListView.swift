@@ -2,10 +2,11 @@ import UIKit
 
 class CategoryListView: UIViewController {
     private let viewModel: CategoryListViewModel
+    private let colors = Colors()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Категория"
         label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -21,7 +22,7 @@ class CategoryListView: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Привычки и события можно объединять по смыслу"
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -33,7 +34,7 @@ class CategoryListView: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
-        button.titleLabel?.textColor = .white
+        button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(addCategoryButtonAction), for: .touchUpInside)
@@ -45,7 +46,7 @@ class CategoryListView: UIViewController {
         let tableView = UITableView()
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.identifier)
         tableView.separatorColor = .ypGray
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .ypWhite
         tableView.dataSource = self
         tableView.delegate = self
         tableView.allowsMultipleSelection = false
@@ -65,7 +66,7 @@ class CategoryListView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         addSubviews()
         setupLayout()
     }

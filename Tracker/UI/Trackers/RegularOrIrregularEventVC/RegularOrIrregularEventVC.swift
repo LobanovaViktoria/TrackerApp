@@ -5,12 +5,12 @@ protocol RegularOrIrregularEventVCDelegate: AnyObject {
 }
 
 class RegularOrIrregularEventVC: UIViewController {
-    
+    private let colors = Colors()
     public weak var delegate: RegularOrIrregularEventVCDelegate?
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Создание трекера"
         label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -21,6 +21,7 @@ class RegularOrIrregularEventVC: UIViewController {
         let button = UIButton()
         button.setTitle("Привычка", for: .normal)
         button.backgroundColor = .ypBlack
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(regularEventButtonAction), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -31,6 +32,7 @@ class RegularOrIrregularEventVC: UIViewController {
         let button = UIButton()
         button.setTitle("Нерегулярное событие", for: .normal)
         button.backgroundColor = .ypBlack
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(irregularEventButtonAction), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false        
@@ -39,7 +41,7 @@ class RegularOrIrregularEventVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         addSubviews()
         setupLayout()
     }

@@ -28,6 +28,7 @@ protocol CreateEventVCDelegate: AnyObject {
 }
 
 class CreateEventVC: UIViewController {
+    private let colors = Colors()
     public weak var delegate: CreateEventVCDelegate?
     
     private let emojies = [
@@ -35,7 +36,7 @@ class CreateEventVC: UIViewController {
         "🍔", "🥦", "🏓", "🥇", "🎸", "🏝"
     ]
     
-    private let colors: [UIColor] = [.color1, .color2, .color3, .color4, .color5, .color6, .color7, .color8, .color9, .color10, .color11, .color12, .color13, .color14, .color15, .color16, .color17, .color18]
+    private let colorsArray: [UIColor] = [.color1, .color2, .color3, .color4, .color5, .color6, .color7, .color8, .color9, .color10, .color11, .color12, .color13, .color14, .color15, .color16, .color17, .color18]
     
     private let collectionViewHeader = ["Emoji", "Цвет"]
     private let event: Event
@@ -79,7 +80,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = .ypWhite
         scrollView.frame = view.bounds
         scrollView.contentSize = contentSize
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,14 +93,14 @@ class CreateEventVC: UIViewController {
     
     private lazy var titleBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var completedDaysBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -107,7 +108,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var completedDaysLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Дней"
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
@@ -139,7 +140,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = editTracker == nil ? event.titleText : event.editTitleText
         label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.textAlignment = .center
@@ -209,7 +210,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var categoryButtonTitle: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Категория"
         label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -234,7 +235,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var scheduleButtonTitle: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Расписание"
         label.font = .systemFont(ofSize: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -256,6 +257,7 @@ class CreateEventVC: UIViewController {
             collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(EmojiAndColorCollectionViewCell.self, forCellWithReuseIdentifier: EmojiAndColorCollectionViewCell.identifier)
         collectionView.register(EmojiAndColorSupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiAndColorSupplementaryView.identifier)
+        collectionView.backgroundColor = .ypWhite
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -264,7 +266,7 @@ class CreateEventVC: UIViewController {
     
     private lazy var buttonBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -272,6 +274,7 @@ class CreateEventVC: UIViewController {
     private lazy var createEventButton: UIButton = {
         let button = UIButton()
         var titleButton = editTracker == nil ? "Создать" : "Сохранить"
+        button.setTitleColor(.ypWhite, for: .normal)
         button.setTitle(titleButton, for: .normal)
         button.backgroundColor = .gray
         button.layer.cornerRadius = 16
@@ -305,7 +308,7 @@ class CreateEventVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         addSubviews()
         setupLayout()
         setupEditTracker()
@@ -320,7 +323,7 @@ class CreateEventVC: UIViewController {
         cellEmoji?.backgroundColor = .lightGray
         selectedEmojiCell = IndexPath(row: indexPathEmoji, section: 0)
         
-        guard let indexPathColor = colors.firstIndex(where: {$0.hexString == selectedColor?.hexString}) else { return }
+        guard let indexPathColor = colorsArray.firstIndex(where: {$0.hexString == selectedColor?.hexString}) else { return }
         let cellColor = self.emojiAndColorCollectionView.cellForItem(at: IndexPath(row: indexPathColor, section: 1))
         cellColor?.layer.borderWidth = 3
         cellColor?.layer.cornerRadius = 8
@@ -666,7 +669,7 @@ extension CreateEventVC: UICollectionViewDataSource {
         if section == 0 {
             returnValue = emojies.count
         } else if section == 1 {
-            returnValue = colors.count
+            returnValue = colorsArray.count
         }
         return returnValue
     }
@@ -683,7 +686,7 @@ extension CreateEventVC: UICollectionViewDataSource {
         if section == 0 {
             cell.emojiLabel.text = emojies[indexPath.row]
         } else if section == 1 {
-            cell.colorView.backgroundColor = colors[indexPath.row]
+            cell.colorView.backgroundColor = colorsArray[indexPath.row]
             cell.colorView.layer.cornerRadius = 8
         }
         return cell

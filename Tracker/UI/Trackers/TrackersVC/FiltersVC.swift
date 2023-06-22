@@ -5,6 +5,7 @@ protocol FiltersVCDelegate: AnyObject {
 }
 
 class FiltersVC: UIViewController {
+    private let colors = Colors()
     weak var delegate: FiltersVCDelegate?
     
     private let filters: [Filter] = Filter.allCases
@@ -12,7 +13,7 @@ class FiltersVC: UIViewController {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.text = "Фильтры"
         label.font = UIFont.mediumSystemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -23,7 +24,7 @@ class FiltersVC: UIViewController {
         let tableView = UITableView()
         tableView.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.identifier)
         tableView.separatorColor = .ypGray
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .ypWhite
         tableView.dataSource = self
         tableView.delegate = self
         tableView.allowsMultipleSelection = false
@@ -33,7 +34,7 @@ class FiltersVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = colors.viewBackgroundColor
         addSubviews()
         setupLayout()
     }

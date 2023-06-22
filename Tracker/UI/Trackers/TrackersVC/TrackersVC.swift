@@ -8,6 +8,10 @@ final class TrackersVC: UIViewController {
     private let colors = Colors()
     private let titleTrackers = NSLocalizedString("trackersTitle", tableName: "LocalizableString", comment: "Title Trackers")
     private let filtersButtonTitle = NSLocalizedString("filters", tableName: "LocalizableString", comment: "Title Trackers")
+    private let stubTitle = NSLocalizedString("stubTitle", tableName: "LocalizableString", comment: "stubTitle")
+    private let nothingFound = NSLocalizedString("nothingFound", tableName: "LocalizableString", comment: "nothingFound")
+    private let search = NSLocalizedString("search", tableName: "LocalizableString", comment: "search")
+    private let cancel = NSLocalizedString("cancel", tableName: "LocalizableString", comment: "cancel")
    
     //трекеры, которые были «выполнены» в выбранную дату
     private var completedTrackers: [TrackerRecord] = []
@@ -42,8 +46,8 @@ final class TrackersVC: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.textColor = .black
-        label.text = "Что будем отслеживать?"
+        label.textColor = .ypBlack
+        label.text = stubTitle
         label.font = .mediumSystemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -53,13 +57,16 @@ final class TrackersVC: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.backgroundColor = .datePickerColor
         datePicker.layer.cornerRadius = 8
+        datePicker.tintColor = .ypBlack
+        datePicker.overrideUserInterfaceStyle = .light
         datePicker.layer.masksToBounds = true
+        
         return datePicker
     }()
     
     private lazy var searchTextField: UITextField = {
         let searchTextField = UITextField()
-        searchTextField.placeholder = "Поиск"
+        searchTextField.placeholder = search
         searchTextField.textColor = .ypBlack
         searchTextField.font = .systemFont(ofSize: 17)
         searchTextField.backgroundColor = .searchTextFieldColor
@@ -80,7 +87,7 @@ final class TrackersVC: UIViewController {
     
     private lazy var cancelEditingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(search, for: .normal)
         button.setTitleColor(.ypBlue, for: .normal)
         button.layer.cornerRadius = 17
         button.addTarget(self, action: #selector(cancelEditingButtonAction), for: .touchUpInside)
@@ -146,12 +153,12 @@ final class TrackersVC: UIViewController {
             navBar.topItem?.setLeftBarButton(leftButton, animated: false)
             datePicker.preferredDatePickerStyle = .compact
             datePicker.datePickerMode = .date
-            datePicker.locale = Locale(identifier: "ru_RU")
             datePicker.accessibilityLabel = dateFormatter.string(from: datePicker.date)
             
             let rightButton = UIBarButtonItem(customView: datePicker)
             datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
             rightButton.accessibilityLabel = dateFormatter.string(from: datePicker.date)
+            rightButton.customView?.tintColor = .ypBlue
             navBar.topItem?.setRightBarButton(rightButton, animated: false)
             navBar.prefersLargeTitles = true
         }
@@ -496,9 +503,14 @@ extension TrackersVC {
     @objc func textFieldChanged() {
         searchText = searchTextField.text ?? ""
         imageView.image = searchText.isEmpty ? UIImage(named: "star") : UIImage(named: "notFound")
-        label.text = searchText.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
+        label.text = searchText.isEmpty ? stubTitle : nothingFound
         widthAnchor?.constant = 85
         updateCategories(with: trackerCategoryStore.predicateFetch(nameTracker: searchText))
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 
