@@ -35,7 +35,12 @@ class TrackerStore: NSObject {
     
     convenience override init() {
         let context = DatabaseManager.shared.context
-        try! self.init(context: context)
+        self.init(context: context)
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            assertionFailure("TrackerStore fetch failed")
+        }
     }
     
     var trackers: [Tracker] {
@@ -44,7 +49,7 @@ class TrackerStore: NSObject {
         return trackers
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
         
@@ -60,7 +65,6 @@ class TrackerStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
     }
     
     func addNewTracker(_ tracker: Tracker) throws {
@@ -164,10 +168,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             delegate?.store(
                 self,
                 didUpdate: TrackerStoreUpdate(
-                    insertedIndexes: insertedIndexes!,
-                    deletedIndexes: deletedIndexes!,
-                    updatedIndexes: updatedIndexes!,
-                    movedIndexes: movedIndexes!
+                    insertedIndexes: insertedIndexes ?? [],
+                    deletedIndexes: deletedIndexes ?? [],
+                    updatedIndexes: updatedIndexes ?? [],
+                    movedIndexes: movedIndexes ?? []
                 )
             )
             insertedIndexes = nil
@@ -185,19 +189,31 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     ) {
         switch type {
         case .insert:
-            guard let indexPath = newIndexPath else { fatalError() }
+            guard let indexPath = newIndexPath else {
+                assertionFailure("insert indexPath - nil")
+                return
+            }
             insertedIndexes?.insert(indexPath.item)
         case .delete:
-            guard let indexPath = indexPath else { fatalError() }
+            guard let indexPath = indexPath else {
+                assertionFailure("delete indexPath - nil")
+                return
+            }
             deletedIndexes?.insert(indexPath.item)
         case .update:
-            guard let indexPath = indexPath else { fatalError() }
+            guard let indexPath = indexPath else {
+                assertionFailure("update indexPath - nil")
+                return
+            }
             updatedIndexes?.insert(indexPath.item)
         case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { fatalError() }
+            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else {
+                assertionFailure("move indexPath - nil")
+                return
+            }
             movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
         @unknown default:
-            fatalError()
+            assertionFailure("unknown case")
         }
     }
 }
