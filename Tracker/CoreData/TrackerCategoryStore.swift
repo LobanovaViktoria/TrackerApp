@@ -24,11 +24,10 @@ protocol TrackerCategoryStoreDelegate: AnyObject {
 }
 
 class TrackerCategoryStore: NSObject {
+    weak var delegate: TrackerCategoryStoreDelegate?
     
-    private let trackerStore = TrackerStore()
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
-    weak var delegate: TrackerCategoryStoreDelegate?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -36,18 +35,22 @@ class TrackerCategoryStore: NSObject {
     
     convenience override init() {
         let context = DatabaseManager.shared.context
-        try! self.init(context: context)
+        self.init(context: context)
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            assertionFailure("TrackerCategoryStore fetch failed")
+        }
     }
     
     var trackerCategories: [TrackerCategoryModel] {
-        guard
-            let objects = self.fetchedResultsController.fetchedObjects,
-            let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
+        guard let objects = self.fetchedResultsController.fetchedObjects,
+              let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
         else { return [] }
         return trackerCategories
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
         
@@ -63,7 +66,6 @@ class TrackerCategoryStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
     }
     
     func addNewTrackerCategory(_ trackerCategory: TrackerCategoryModel) throws {
@@ -80,6 +82,22 @@ class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
+    func category(_ categoryName: String) -> TrackerCategoryCoreData? {
+        return fetchedResultsController.fetchedObjects?.first {
+            $0.nameCategory == categoryName
+        }
+    }
+    
+    func category(forTracker tracker: Tracker) -> TrackerCategoryModel? {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(format: "ANY trackers.id == %@", tracker.id.uuidString)
+        guard let trackerCategoriesCoreData = try? context.fetch(request) else { return nil }
+        guard let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)})
+        else { return nil }
+        return categories.first
+    }
+    
     func deleteCategory(_ categoryToDelete: TrackerCategoryModel) throws {
         let category = fetchedResultsController.fetchedObjects?.first {
             $0.nameCategory == categoryToDelete.name
@@ -92,19 +110,18 @@ class TrackerCategoryStore: NSObject {
     
     func updateExistingTrackerCategory(
         _ trackerCategoryCoreData: TrackerCategoryCoreData,
-        with category: TrackerCategoryModel)
-    {
-        trackerCategoryCoreData.nameCategory = category.name
-        for tracker in category.trackers {
-            let track = TrackerCoreData(context: context)
-            track.id = tracker.id
-            track.nameTracker = tracker.name
-            track.color = tracker.color?.hexString
-            track.emoji = tracker.emoji
-            track.schedule = tracker.schedule?.compactMap { $0.rawValue }
-            trackerCategoryCoreData.addToTrackers(track)
+        with category: TrackerCategoryModel) {
+            trackerCategoryCoreData.nameCategory = category.name
+            for tracker in category.trackers {
+                let track = TrackerCoreData(context: context)
+                track.id = tracker.id
+                track.nameTracker = tracker.name
+                track.color = tracker.color?.hexString
+                track.emoji = tracker.emoji
+                track.schedule = tracker.schedule?.compactMap { $0.rawValue }
+                trackerCategoryCoreData.addToTrackers(track)
+            }
         }
-    }
     
     func addTracker(_ tracker: Tracker, to trackerCategory: TrackerCategoryModel) throws {
         let category = fetchedResultsController.fetchedObjects?.first {
@@ -130,13 +147,16 @@ class TrackerCategoryStore: NSObject {
             guard let id = trackerCoreData.id,
                   let nameTracker = trackerCoreData.nameTracker,
                   let color = trackerCoreData.color?.color,
-                  let emoji = trackerCoreData.emoji else { return nil }
+                  let emoji = trackerCoreData.emoji
+            else { return nil }
+            let pinned = trackerCoreData.pinned
             return Tracker(
                 id: id,
                 name: nameTracker,
                 color: color,
                 emoji: emoji,
-                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) }
+                schedule: trackerCoreData.schedule?.compactMap { WeekDay(rawValue: $0) },
+                pinned: pinned
             )
         } ?? []
         return TrackerCategoryModel(
@@ -147,7 +167,6 @@ class TrackerCategoryStore: NSObject {
 }
 
 extension TrackerCategoryStore {
-    
     func predicateFetch(nameTracker: String) -> [TrackerCategoryModel] {
         if nameTracker.isEmpty {
             return trackerCategories
@@ -164,33 +183,30 @@ extension TrackerCategoryStore {
 }
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
-    
     func controllerWillChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
-        updatedIndexes = IndexSet()
-        movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
-    }
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            insertedIndexes = IndexSet()
+            deletedIndexes = IndexSet()
+            updatedIndexes = IndexSet()
+            movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
+        }
     
     func controllerDidChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
-        delegate?.store(
-            self,
-            didUpdate: TrackerCategoryStoreUpdate(
-                insertedIndexes: insertedIndexes!,
-                deletedIndexes: deletedIndexes!,
-                updatedIndexes: updatedIndexes!,
-                movedIndexes: movedIndexes!
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+            delegate?.store(
+                self,
+                didUpdate: TrackerCategoryStoreUpdate(
+                    insertedIndexes: insertedIndexes ?? [],
+                    deletedIndexes: deletedIndexes ?? [],
+                    updatedIndexes: updatedIndexes ?? [],
+                    movedIndexes: movedIndexes ?? []
+                )
             )
-        )
-        insertedIndexes = nil
-        deletedIndexes = nil
-        updatedIndexes = nil
-        movedIndexes = nil
-    }
+            insertedIndexes = nil
+            deletedIndexes = nil
+            updatedIndexes = nil
+            movedIndexes = nil
+        }
     
     func controller(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
@@ -201,19 +217,31 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     ) {
         switch type {
         case .insert:
-            guard let indexPath = newIndexPath else { fatalError() }
+            guard let indexPath = newIndexPath else {
+                assertionFailure("insert indexPath - nil")
+                return
+            }
             insertedIndexes?.insert(indexPath.item)
         case .delete:
-            guard let indexPath = indexPath else { fatalError() }
+            guard let indexPath = indexPath else {
+                assertionFailure("delete indexPath - nil")
+                return
+            }
             deletedIndexes?.insert(indexPath.item)
         case .update:
-            guard let indexPath = indexPath else { fatalError() }
+            guard let indexPath = indexPath else {
+                assertionFailure("update indexPath - nil")
+                return
+            }
             updatedIndexes?.insert(indexPath.item)
         case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { fatalError() }
+            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else {
+                assertionFailure("move indexPath - nil")
+                return
+            }
             movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
         @unknown default:
-            fatalError()
+            assertionFailure("unknown case")
         }
     }
 }

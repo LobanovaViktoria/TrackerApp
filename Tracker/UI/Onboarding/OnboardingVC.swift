@@ -1,7 +1,8 @@
 import UIKit
 
-class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+class OnboardingVC: UIPageViewController {
     
+    let analyticsService = AnalyticsService()
     private lazy var pages: [UIViewController] = {
         return [blueVC, redVC]
     }()
@@ -9,14 +10,18 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
     private lazy var blueVC: UIViewController = {
         let blueVC = UIViewController()
         let image = "onboardingBlue.pdf"
-        blueVC.view.addBackground(image: image)
+        let imageView = UIImageView(frame: blueVC.view.frame)
+        imageView.image = UIImage(named: image)
+        blueVC.view.addSubview(imageView)
         return blueVC
     }()
     
     private lazy var redVC: UIViewController = {
         let redVC = UIViewController()
         let image = "onboardingRed.pdf"
-        redVC.view.addBackground(image: image)
+        let imageView = UIImageView(frame: redVC.view.frame)
+        imageView.image = UIImage(named: image)
+        redVC.view.addSubview(imageView)
         return redVC
     }()
     
@@ -41,7 +46,7 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
         return label
     }()
     
-    private lazy var BlueVCEnterButton: UIButton = {
+    private lazy var blueVCEnterButton: UIButton = {
         let button = UIButton()
         button.setTitle("Вот это технологии!", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -78,6 +83,8 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
         super.viewDidLoad()
         dataSource = self
         delegate = self
+        blueVC.overrideUserInterfaceStyle = .light
+        redVC.overrideUserInterfaceStyle = .light
         
         if let first = pages.first { setViewControllers([first], direction: .forward, animated: true, completion: nil)
         }
@@ -88,17 +95,17 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
     
     private func addBlueVC() {
         blueVC.view.addSubview(blueVCLabel)
-        blueVC.view.addSubview(BlueVCEnterButton)
+        blueVC.view.addSubview(blueVCEnterButton)
         
         NSLayoutConstraint.activate([
             blueVCLabel.bottomAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.bottomAnchor, constant: -290),
             blueVCLabel.centerXAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.centerXAnchor),
             blueVCLabel.widthAnchor.constraint(equalToConstant: 343),
             
-            BlueVCEnterButton.heightAnchor.constraint(equalToConstant: 60),
-            BlueVCEnterButton.leadingAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            BlueVCEnterButton.trailingAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            BlueVCEnterButton.bottomAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.bottomAnchor, constant: -71)
+            blueVCEnterButton.heightAnchor.constraint(equalToConstant: 60),
+            blueVCEnterButton.leadingAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            blueVCEnterButton.trailingAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            blueVCEnterButton.bottomAnchor.constraint(equalTo: blueVC.view.safeAreaLayoutGuide.bottomAnchor, constant: -71)
         ])
     }
     
@@ -133,9 +140,9 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
         window.rootViewController = TabBarController.configure()
         UserDefaults.standard.set(true, forKey: "isOnbordingShown")
     }
-    
-    // MARK: - UIPageViewControllerDataSource
-    
+}
+   
+extension OnboardingVC: UIPageViewControllerDataSource {
     func pageViewController(
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
@@ -163,9 +170,9 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
         }
         return pages[nextIndex]
     }
-    
-    // MARK: - UIPageViewControllerDelegate
-    
+}
+
+extension OnboardingVC: UIPageViewControllerDelegate {
     func pageViewController(
         _ pageViewController: UIPageViewController,
         didFinishAnimating finished: Bool,
@@ -176,18 +183,5 @@ class OnboardingVC: UIPageViewController, UIPageViewControllerDataSource, UIPage
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex
         }
-    }
-}
-
-extension UIView {
-    
-    func addBackground(image: String) {
-        let width = UIScreen.main.bounds.size.width
-        let height = UIScreen.main.bounds.size.height
-        let imageViewBackground = UIImageView(frame: CGRectMake(0, 0, width, height))
-        imageViewBackground.image = UIImage(named: image)
-        imageViewBackground.contentMode = UIView.ContentMode.scaleAspectFill
-        self.addSubview(imageViewBackground)
-        self.sendSubviewToBack(imageViewBackground)
     }
 }
