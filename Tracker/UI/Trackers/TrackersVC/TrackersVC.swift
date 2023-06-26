@@ -87,7 +87,7 @@ final class TrackersVC: UIViewController {
     
     private lazy var cancelEditingButton: UIButton = {
         let button = UIButton()
-        button.setTitle(search, for: .normal)
+        button.setTitle(cancel, for: .normal)
         button.setTitleColor(.ypBlue, for: .normal)
         button.layer.cornerRadius = 17
         button.addTarget(self, action: #selector(cancelEditingButtonAction), for: .touchUpInside)

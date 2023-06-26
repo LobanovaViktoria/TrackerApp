@@ -704,7 +704,7 @@ extension CreateEventVC: UICollectionViewDelegate {
         if section == 0 {
             if selectedEmojiCell != nil {
                 collectionView.deselectItem(at: selectedEmojiCell!, animated: true)
-                collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .white
+                collectionView.cellForItem(at: selectedEmojiCell!)?.backgroundColor = .clear
             }
             cell?.backgroundColor = .lightGray
             selectedEmoji = cell?.emojiLabel.text ?? ""
@@ -725,7 +725,7 @@ extension CreateEventVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as? EmojiAndColorCollectionViewCell
         collectionView.deselectItem(at: indexPath, animated: true)
-        cell?.backgroundColor = .white
+        cell?.backgroundColor = .clear
         cell?.layer.borderWidth = 0
         if indexPath.section == 0 {
             selectedEmoji = ""
