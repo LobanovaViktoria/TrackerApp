@@ -2,8 +2,8 @@
 
 # Ссылки
 
-Дизайн Figma - [посмотреть](https://www.figma.com/file/owAO4CAPTJdpM1BZU5JHv7/Tracker-(YP)?t=SZDLmkWeOPX4y6mp-0)
-Скринкаст работы приложения - [посмотреть](https://disk.yandex.ru/i/VBjAj6Y5gGwdtg)
+Дизайн Figma - [посмотреть](https://www.figma.com/file/owAO4CAPTJdpM1BZU5JHv7/Tracker-(YP)?t=SZDLmkWeOPX4y6mp-0)   
+Скринкаст работы приложения - [посмотреть](https://disk.yandex.ru/i/VBjAj6Y5gGwdtg)   
 
 # Иллюстрации
 ![Изображение 1](tracker1.png)
