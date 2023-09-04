@@ -6,12 +6,12 @@
 Скринкаст работы приложения - [посмотреть](https://disk.yandex.ru/i/VBjAj6Y5gGwdtg)
 
 # Иллюстрации
-![Изображение 1](tracker1.png)  
-![Изображение 2](tracker2.png)  
-![Изображение 3](tracker3.png)  
-![Изображение 4](tracker4.png)  
-![Изображение 5](tracker5.png)  
-![Изображение 6](tracker6.png)  
+![Изображение 1](tracker1.png)
+![Изображение 2](tracker2.png)
+![Изображение 3](tracker3.png)
+![Изображение 4](tracker4.png)
+![Изображение 5](tracker5.png)
+![Изображение 6](tracker6.png)
 
 # Назначение и цели приложения
 
